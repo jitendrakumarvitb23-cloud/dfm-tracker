@@ -3,1979 +3,1866 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DFM Tracker</title>
+<title>DFM Tracker V3</title>
 
 <style>
-* {
-    box-sizing: border-box;
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f4f7fb;color:#172033}
+button,input,select,textarea{font-family:inherit}
+button{cursor:pointer}
+
+:root{
+  --blue:#0f4c81;
+  --blue2:#1769aa;
+  --light:#eef4fa;
+  --border:#dce5ef;
+  --green:#198754;
+  --orange:#d97706;
+  --red:#c62828;
+  --purple:#6f42c1;
+  --grey:#64748b;
 }
 
-body {
-    margin: 0;
-    font-family: Arial, Helvetica, sans-serif;
-    background: #f5f7fb;
-    color: #172033;
+.hidden{display:none!important}
+
+#loginPage{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  background:linear-gradient(135deg,#eaf2f9,#f8fbff);
 }
 
-.hidden {
-    display: none !important;
+.login-card{
+  width:430px;
+  max-width:100%;
+  background:white;
+  padding:34px;
+  border-radius:14px;
+  box-shadow:0 12px 35px rgba(0,0,0,.12);
 }
 
-button, input, select, textarea {
-    font: inherit;
+.login-card h1{margin:0;color:var(--blue)}
+.login-card p{color:#667085}
+.login-card input{
+  width:100%;padding:12px;margin:7px 0;
+  border:1px solid var(--border);border-radius:7px
 }
 
-button {
-    cursor: pointer;
+.primary{
+  background:var(--blue);color:white;border:0;
+  padding:10px 16px;border-radius:7px
+}
+.secondary{
+  background:white;color:var(--blue);
+  border:1px solid var(--blue);padding:9px 15px;border-radius:7px
+}
+.danger{
+  background:#fff0f0;color:var(--red);
+  border:1px solid #ffcaca;padding:9px 14px;border-radius:7px
 }
 
-/* LOGIN */
+.login-actions{display:flex;gap:8px;margin-top:12px}
+.error{color:var(--red);font-size:13px;margin-top:10px}
 
-.login-page {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    background: linear-gradient(135deg,#eef2ff,#f8fafc);
+.app{display:flex;min-height:100vh}
+
+.sidebar{
+  width:245px;background:#0d3d67;color:white;
+  position:fixed;top:0;bottom:0;left:0;
+  padding:22px 14px;overflow:auto
 }
 
-.login-card {
-    width: 420px;
-    max-width: 100%;
-    background: white;
-    padding: 32px;
-    border-radius: 16px;
-    box-shadow: 0 15px 40px rgba(0,0,0,.08);
+.logo{font-size:22px;font-weight:bold;margin:4px 12px 25px}
+.logo small{display:block;font-size:11px;font-weight:normal;opacity:.7;margin-top:4px}
+
+.nav-item{
+  padding:11px 13px;border-radius:7px;margin:4px 0;
+  cursor:pointer;font-size:14px
+}
+.nav-item:hover,.nav-item.active{background:#175a91}
+
+.main{margin-left:245px;width:calc(100% - 245px)}
+
+.topbar{
+  background:white;padding:15px 25px;
+  border-bottom:1px solid var(--border);
+  display:flex;justify-content:space-between;align-items:center;
+  position:sticky;top:0;z-index:5
 }
 
-.login-card h1 {
-    margin: 0 0 5px;
-    color: #2446a8;
+.userbox{font-size:13px;color:#475569;text-align:right}
+
+.content{padding:25px}
+.page-title{margin:0 0 20px;font-size:25px}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+  gap:14px;margin-bottom:22px
 }
 
-.subtitle {
-    color: #667085;
-    margin-bottom: 25px;
+.card{
+  background:white;border:1px solid var(--border);
+  border-radius:10px;padding:18px
+}
+.card .number{font-size:28px;font-weight:bold;color:var(--blue)}
+.card .label{font-size:12px;color:#64748b;margin-top:5px}
+
+.panel{
+  background:white;border:1px solid var(--border);
+  border-radius:10px;padding:20px;margin-bottom:20px
 }
 
-label {
-    display: block;
-    font-size: 13px;
-    font-weight: bold;
-    margin-bottom: 6px;
+.panel h3{margin-top:0;color:#22324a}
+
+.toolbar{
+  display:flex;gap:10px;flex-wrap:wrap;
+  align-items:center;margin-bottom:15px
+}
+.toolbar input,.toolbar select{
+  padding:9px;border:1px solid var(--border);border-radius:6px
 }
 
-.field {
-    margin-bottom: 15px;
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{
+  background:#f5f8fb;text-align:left;padding:10px;
+  border-bottom:1px solid var(--border)
+}
+td{padding:10px;border-bottom:1px solid #edf1f5;vertical-align:top}
+tr:hover td{background:#fbfdff}
+
+.badge{
+  display:inline-block;padding:4px 8px;border-radius:20px;
+  font-size:11px;font-weight:bold
+}
+.b-open{background:#e8f2ff;color:#1769aa}
+.b-supplier{background:#fff4df;color:#b46700}
+.b-npd{background:#efe8ff;color:#6f42c1}
+.b-design{background:#e7f7ef;color:#13764b}
+.b-closed{background:#e7f6e9;color:#267334}
+.b-overdue{background:#ffe7e7;color:#b42318}
+
+.form-grid{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px
+}
+.full{grid-column:1/-1}
+
+label{display:block;font-size:12px;font-weight:bold;margin-bottom:5px;color:#475569}
+input,select,textarea{
+  width:100%;padding:10px;border:1px solid var(--border);
+  border-radius:6px;background:white
+}
+textarea{min-height:85px;resize:vertical}
+
+.timeline{border-left:3px solid #d9e6f2;margin-left:10px;padding-left:20px}
+.event{
+  position:relative;background:#f8fafc;border:1px solid #e4eaf0;
+  border-radius:8px;padding:14px;margin-bottom:14px
+}
+.event:before{
+  content:"";position:absolute;width:11px;height:11px;
+  border-radius:50%;background:var(--blue);
+  left:-27px;top:18px
+}
+.event-title{font-weight:bold;color:#1e3a56}
+.event-meta{font-size:11px;color:#64748b;margin:5px 0 8px}
+.event-text{font-size:13px;line-height:1.5}
+.doc{
+  background:white;border:1px solid #dde6ef;
+  padding:8px;border-radius:6px;margin-top:8px;font-size:12px
+}
+.doc a{color:var(--blue2);font-weight:bold;text-decoration:none}
+
+.modal{
+  position:fixed;inset:0;background:rgba(0,0,0,.45);
+  display:flex;align-items:center;justify-content:center;
+  z-index:20;padding:20px
+}
+.modal-box{
+  background:white;width:950px;max-width:100%;
+  max-height:92vh;overflow:auto;border-radius:12px;padding:22px
+}
+.modal-head{
+  display:flex;justify-content:space-between;align-items:center;
+  border-bottom:1px solid var(--border);padding-bottom:12px;margin-bottom:18px
+}
+.close{font-size:24px;cursor:pointer;color:#64748b}
+
+.two-col{
+  display:grid;grid-template-columns:1fr 1.2fr;gap:18px
 }
 
-input, select, textarea {
-    width: 100%;
-    padding: 11px;
-    border: 1px solid #d0d5dd;
-    border-radius: 8px;
-    background: white;
+.kv{
+  display:grid;grid-template-columns:150px 1fr;
+  gap:7px;font-size:13px;margin-bottom:7px
+}
+.kv b{color:#64748b}
+
+.report-grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px
 }
 
-textarea {
-    min-height: 90px;
-    resize: vertical;
+.empty{
+  text-align:center;padding:35px;color:#8a97a8
 }
 
-.btn {
-    border: none;
-    background: #3157d5;
-    color: white;
-    padding: 11px 16px;
-    border-radius: 8px;
-    font-weight: bold;
-}
-
-.btn-secondary {
-    background: white;
-    color: #344054;
-    border: 1px solid #d0d5dd;
-}
-
-.full {
-    width: 100%;
-}
-
-.auth-actions {
-    display: flex;
-    gap: 10px;
-}
-
-.auth-actions button {
-    flex: 1;
-}
-
-.message {
-    font-size: 13px;
-    margin-top: 12px;
-}
-
-.error {
-    color: #b42318;
-}
-
-.success {
-    color: #067647;
-}
-
-/* APP */
-
-.header {
-    height: 65px;
-    background: white;
-    border-bottom: 1px solid #e4e7ec;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 22px;
-}
-
-.brand {
-    font-size: 20px;
-    font-weight: bold;
-    color: #2446a8;
-}
-
-.user-area {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.user-email {
-    font-size: 13px;
-    color: #667085;
-}
-
-.layout {
-    display: grid;
-    grid-template-columns: 220px 1fr;
-    min-height: calc(100vh - 65px);
-}
-
-.sidebar {
-    background: white;
-    border-right: 1px solid #e4e7ec;
-    padding: 18px;
-}
-
-.nav {
-    width: 100%;
-    text-align: left;
-    border: none;
-    background: transparent;
-    padding: 11px;
-    border-radius: 8px;
-    margin-bottom: 5px;
-}
-
-.nav:hover,
-.nav.active {
-    background: #eef2ff;
-    color: #3157d5;
-    font-weight: bold;
-}
-
-main {
-    padding: 24px;
-}
-
-h2 {
-    margin-top: 0;
-}
-
-.cards {
-    display: grid;
-    grid-template-columns: repeat(4,1fr);
-    gap: 15px;
-    margin-bottom: 20px;
-}
-
-.card {
-    background: white;
-    border: 1px solid #e4e7ec;
-    border-radius: 12px;
-    padding: 18px;
-}
-
-.card-title {
-    color: #667085;
-    font-size: 13px;
-}
-
-.number {
-    font-size: 30px;
-    font-weight: bold;
-    margin-top: 8px;
-}
-
-.section-card {
-    background: white;
-    border: 1px solid #e4e7ec;
-    border-radius: 12px;
-    padding: 18px;
-}
-
-.top-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 15px;
-}
-
-.search {
-    margin: 15px 0;
-    max-width: 420px;
-}
-
-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-th, td {
-    text-align: left;
-    padding: 11px;
-    border-bottom: 1px solid #eaecf0;
-    font-size: 13px;
-}
-
-th {
-    background: #f9fafb;
-}
-
-.status {
-    background: #eef2ff;
-    color: #3448a5;
-    padding: 5px 9px;
-    border-radius: 20px;
-    display: inline-block;
-    font-size: 12px;
-}
-
-.click {
-    color: #3157d5;
-    text-decoration: underline;
-    cursor: pointer;
-}
-
-/* MODAL */
-
-.modal {
-    position: fixed;
-    inset: 0;
-    background: rgba(16,24,40,.55);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    z-index: 20;
-}
-
-.modal-box {
-    background: white;
-    border-radius: 14px;
-    padding: 22px;
-    width: 850px;
-    max-width: 100%;
-    max-height: 90vh;
-    overflow-y: auto;
-}
-
-.grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-}
-
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.history {
-    border-left: 2px solid #e4e7ec;
-    padding-left: 18px;
-}
-
-.history-item {
-    margin-bottom: 22px;
-}
-
-.history-title {
-    font-weight: bold;
-}
-
-.small {
-    font-size: 12px;
-    color: #667085;
-    margin: 4px 0;
-}
-
-.feedback {
-    margin-top: 7px;
-    padding: 8px;
-    background: #f9fafb;
-    border-radius: 6px;
-}
-
-@media(max-width:850px) {
-
-    .layout {
-        grid-template-columns: 1fr;
-    }
-
-    .sidebar {
-        display: none;
-    }
-
-    .cards {
-        grid-template-columns: 1fr 1fr;
-    }
-
-    .grid {
-        grid-template-columns: 1fr;
-    }
+@media(max-width:800px){
+  .sidebar{width:70px;padding:15px 7px}
+  .logo{font-size:0;margin:10px}
+  .logo:after{content:"DFM";font-size:16px}
+  .nav-item{font-size:0;text-align:center}
+  .nav-item:before{content:"•";font-size:22px}
+  .main{margin-left:70px;width:calc(100% - 70px)}
+  .form-grid,.two-col{grid-template-columns:1fr}
+  .full{grid-column:auto}
 }
 </style>
 </head>
 
 <body>
 
-<!-- LOGIN -->
+<div id="loginPage">
+  <div class="login-card">
+    <h1>DFM Tracker</h1>
+    <p>Design • NPD • Supplier Feedback Management</p>
 
-<section id="loginPage" class="login-page">
+    <input id="loginName" placeholder="Name">
+    <input id="loginEmail" type="email" placeholder="Email">
+    <input id="loginPassword" type="password" placeholder="Password">
 
-<div class="login-card">
+    <div class="login-actions">
+      <button class="primary" id="loginBtn">Login</button>
+      <button class="secondary" id="signupBtn">Create Account</button>
+    </div>
 
-<h1>DFM Tracker</h1>
+    <button style="border:0;background:none;color:#1769aa;margin-top:15px;padding:0"
+            id="forgotBtn">Forgot password?</button>
 
-<div class="subtitle">
-Design • NPD • Supplier Feedback Management
+    <div id="loginError" class="error"></div>
+  </div>
 </div>
 
-<div class="field">
-<label>Name (only required when creating account)</label>
-<input id="name" placeholder="Your name">
+<div id="app" class="app hidden">
+
+  <aside class="sidebar">
+    <div class="logo">
+      DFM Tracker
+      <small>Version 3.0</small>
+    </div>
+
+    <div class="nav-item active" data-page="dashboard">Dashboard</div>
+    <div class="nav-item" data-page="cases">DFM Cases</div>
+    <div class="nav-item" data-page="newdfm">New DFM</div>
+    <div class="nav-item" data-page="partsearch">Part Search & History</div>
+    <div class="nav-item" data-page="actions">My Actions</div>
+    <div class="nav-item" data-page="feedback">Supplier Feedback</div>
+    <div class="nav-item" data-page="contacts">Contacts & Suppliers</div>
+    <div class="nav-item" data-page="reports">Reports</div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <strong id="topTitle">Dashboard</strong>
+      <div>
+        <div class="userbox">
+          <b id="userName"></b><br>
+          <span id="userEmail"></span>
+        </div>
+        <button class="secondary" id="logoutBtn" style="margin-top:5px">Logout</button>
+      </div>
+    </div>
+
+    <div class="content">
+
+      <!-- DASHBOARD -->
+      <section id="page-dashboard">
+        <h1 class="page-title">DFM Dashboard</h1>
+
+        <div class="cards">
+          <div class="card"><div class="number" id="kTotal">0</div><div class="label">TOTAL DFM</div></div>
+          <div class="card"><div class="number" id="kOpen">0</div><div class="label">OPEN</div></div>
+          <div class="card"><div class="number" id="kNpd">0</div><div class="label">NPD PENDING</div></div>
+          <div class="card"><div class="number" id="kSupplier">0</div><div class="label">SUPPLIER PENDING</div></div>
+          <div class="card"><div class="number" id="kDesign">0</div><div class="label">DESIGN PENDING</div></div>
+          <div class="card"><div class="number" id="kOverdue">0</div><div class="label">OVERDUE</div></div>
+          <div class="card"><div class="number" id="kClosed">0</div><div class="label">CLOSED</div></div>
+        </div>
+
+        <div class="panel">
+          <h3>Recent DFM Cases</h3>
+          <div id="recentCases"></div>
+        </div>
+      </section>
+
+      <!-- CASES -->
+      <section id="page-cases" class="hidden">
+        <h1 class="page-title">DFM Cases</h1>
+
+        <div class="panel">
+          <div class="toolbar">
+            <input id="caseSearch" placeholder="Search DFM ID / Part Number / Project">
+            <select id="caseStatus">
+              <option value="">All Status</option>
+              <option>Open</option>
+              <option>Pending with NPD</option>
+              <option>Pending with Supplier</option>
+              <option>Design Pending</option>
+              <option>Closed</option>
+            </select>
+            <button class="primary" onclick="showPage('newdfm')">+ New DFM</button>
+          </div>
+          <div id="caseTable"></div>
+        </div>
+      </section>
+
+      <!-- NEW DFM -->
+      <section id="page-newdfm" class="hidden">
+        <h1 class="page-title">Create New DFM</h1>
+
+        <div class="panel">
+          <form id="newDfmForm">
+            <div class="form-grid">
+
+              <div>
+                <label>DFM ID *</label>
+                <input id="nDfmId" required placeholder="DFM-001">
+              </div>
+
+              <div>
+                <label>Project *</label>
+                <input id="nProject" required placeholder="EVEREST 1.0">
+              </div>
+
+              <div>
+                <label>Part Number *</label>
+                <input id="nPart" required>
+              </div>
+
+              <div>
+                <label>Part Description *</label>
+                <input id="nDescription" required>
+              </div>
+
+              <div>
+                <label>Assembly</label>
+                <input id="nAssembly">
+              </div>
+
+              <div>
+                <label>Supplier</label>
+                <select id="nSupplier"></select>
+              </div>
+
+              <div>
+                <label>NPD Owner</label>
+                <select id="nNpdOwner"></select>
+              </div>
+
+              <div>
+                <label>Priority</label>
+                <select id="nPriority">
+                  <option>Medium</option>
+                  <option>High</option>
+                  <option>Low</option>
+                </select>
+              </div>
+
+              <div>
+                <label>Start Date</label>
+                <input id="nStartDate" type="date">
+              </div>
+
+              <div>
+                <label>Target Closure Date</label>
+                <input id="nTargetDate" type="date">
+              </div>
+
+              <div>
+                <label>Initial Revision</label>
+                <input id="nRevision" value="00">
+              </div>
+
+              <div>
+                <label>Initial Status</label>
+                <select id="nStatus">
+                  <option>Open</option>
+                  <option>Pending with NPD</option>
+                </select>
+              </div>
+
+              <div class="full">
+                <label>Remarks</label>
+                <textarea id="nRemarks"></textarea>
+              </div>
+
+            </div>
+
+            <button class="primary" style="margin-top:18px">Create DFM</button>
+          </form>
+        </div>
+      </section>
+
+      <!-- PART SEARCH -->
+      <section id="page-partsearch" class="hidden">
+        <h1 class="page-title">Part Search & Complete History</h1>
+
+        <div class="panel">
+          <div class="toolbar">
+            <input id="partSearchInput" placeholder="Enter Part Number / DFM ID">
+            <button class="primary" id="partSearchBtn">Search</button>
+          </div>
+          <div id="partSearchResults"></div>
+        </div>
+      </section>
+
+      <!-- MY ACTIONS -->
+      <section id="page-actions" class="hidden">
+        <h1 class="page-title">My Actions</h1>
+        <div class="panel" id="myActions"></div>
+      </section>
+
+      <!-- FEEDBACK -->
+      <section id="page-feedback" class="hidden">
+        <h1 class="page-title">Supplier Feedback</h1>
+        <div class="panel" id="feedbackList"></div>
+      </section>
+
+      <!-- CONTACTS -->
+      <section id="page-contacts" class="hidden">
+        <h1 class="page-title">Contacts & Suppliers</h1>
+
+        <div class="two-col">
+          <div class="panel">
+            <h3>Add Supplier</h3>
+            <label>Supplier Name</label>
+            <input id="supplierName">
+            <button class="primary" id="addSupplierBtn" style="margin-top:10px">Add Supplier</button>
+
+            <hr style="border:0;border-top:1px solid #eee;margin:20px 0">
+
+            <h3>Suppliers</h3>
+            <div id="supplierList"></div>
+          </div>
+
+          <div class="panel">
+            <h3>Add Contact</h3>
+
+            <label>Name</label>
+            <input id="contactName">
+
+            <label style="margin-top:10px">Email</label>
+            <input id="contactEmail">
+
+            <label style="margin-top:10px">Role</label>
+            <select id="contactRole">
+              <option>NPD</option>
+              <option>Supplier</option>
+              <option>Design</option>
+            </select>
+
+            <label style="margin-top:10px">Supplier</label>
+            <select id="contactSupplier"></select>
+
+            <button class="primary" id="addContactBtn" style="margin-top:12px">Add Contact</button>
+
+            <hr style="border:0;border-top:1px solid #eee;margin:20px 0">
+
+            <h3>Contacts</h3>
+            <div id="contactList"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- REPORTS -->
+      <section id="page-reports" class="hidden">
+        <h1 class="page-title">DFM Reports</h1>
+        <div id="reportContent"></div>
+      </section>
+
+    </div>
+  </main>
 </div>
 
-<div class="field">
-<label>Email</label>
-<input id="email" type="email" placeholder="name@company.com">
-</div>
-
-<div class="field">
-<label>Password</label>
-<input id="password" type="password" placeholder="Minimum 6 characters">
-</div>
-
-<div class="auth-actions">
-
-<button id="loginBtn" class="btn">
-Login
-</button>
-
-<button id="signupBtn" class="btn btn-secondary">
-Create Account
-</button>
-
-</div>
-
-<br>
-
-<button id="resetBtn" class="btn btn-secondary full">
-Forgot Password
-</button>
-
-<div id="loginMessage" class="message"></div>
-
-</div>
-
-</section>
-
-
-<!-- APPLICATION -->
-
-<section id="appPage" class="hidden">
-
-<header class="header">
-
-<div class="brand">
-DFM Tracker
-</div>
-
-<div class="user-area">
-
-<span id="currentUser" class="user-email"></span>
-
-<button id="logoutBtn" class="btn btn-secondary">
-Logout
-</button>
-
-</div>
-
-</header>
-
-
-<div class="layout">
-
-<aside class="sidebar">
-
-<button class="nav active" data-page="dashboard">
-Dashboard
-</button>
-
-<button class="nav" data-page="cases">
-DFM Cases
-</button>
-
-</aside>
-
-
-<main>
-
-<!-- DASHBOARD -->
-
-<section id="dashboard">
-
-<h2>Dashboard</h2>
-
-<div class="cards">
-
-<div class="card">
-<div class="card-title">Total DFM</div>
-<div id="totalDFM" class="number">0</div>
-</div>
-
-<div class="card">
-<div class="card-title">Open</div>
-<div id="openDFM" class="number">0</div>
-</div>
-
-<div class="card">
-<div class="card-title">Supplier Pending</div>
-<div id="supplierPending" class="number">0</div>
-</div>
-
-<div class="card">
-<div class="card-title">Closed</div>
-<div id="closedDFM" class="number">0</div>
-</div>
-
-</div>
-
-
-<div class="section-card">
-
-<h3>Recent DFM Cases</h3>
-
-<div id="recentCases"></div>
-
-</div>
-
-</section>
-
-
-<!-- CASES -->
-
-<section id="cases" class="hidden">
-
-<div class="top-row">
-
-<h2>DFM Cases</h2>
-
-<button id="newDFMBtn" class="btn">
-+ New DFM
-</button>
-
-</div>
-
-<input
-id="search"
-class="search"
-placeholder="Search DFM ID, project, part number or supplier">
-
-<div id="dfmTable"></div>
-
-</section>
-
-</main>
-
-</div>
-
-</section>
-
-
-<!-- NEW DFM MODAL -->
-
-<div id="newModal" class="modal hidden">
-
-<div class="modal-box">
-
-<div class="modal-header">
-
-<h2>New DFM Case</h2>
-
-<button id="closeNew" class="btn btn-secondary">
-Close
-</button>
-
-</div>
-
-<div class="grid">
-
-<div class="field">
-<label>DFM ID</label>
-<input id="dfmId" placeholder="DFM-0001">
-</div>
-
-<div class="field">
-<label>Project</label>
-<input id="project" placeholder="EVEREST 1.0">
-</div>
-
-<div class="field">
-<label>Part Number</label>
-<input id="partNumber">
-</div>
-
-<div class="field">
-<label>Part Description</label>
-<input id="description">
-</div>
-
-<div class="field">
-<label>Assembly</label>
-<input id="assembly">
-</div>
-
-<div class="field">
-<label>NPD Owner</label>
-<input id="npdOwner">
-</div>
-
-<div class="field">
-<label>Supplier</label>
-<input id="supplier">
-</div>
-
-<div class="field">
-
-<label>Priority</label>
-
-<select id="priority">
-
-<option>Medium</option>
-<option>High</option>
-<option>Low</option>
-
-</select>
-
-</div>
-
-<div class="field">
-<label>Start Date</label>
-<input id="startDate" type="date">
-</div>
-
-<div class="field">
-<label>Target Closure Date</label>
-<input id="targetDate" type="date">
-</div>
-
-<div class="field">
-<label>Revision</label>
-<input id="revision" value="00">
-</div>
-
-</div>
-
-<button id="createDFMBtn" class="btn">
-Create DFM
-</button>
-
-<div id="newMessage" class="message"></div>
-
-</div>
-
-</div>
-
-
-<!-- DETAIL MODAL -->
-
+<!-- DFM DETAIL MODAL -->
 <div id="detailModal" class="modal hidden">
+  <div class="modal-box">
 
-<div class="modal-box">
+    <div class="modal-head">
+      <div>
+        <h2 id="detailTitle" style="margin:0"></h2>
+        <small id="detailSubtitle"></small>
+      </div>
+      <span class="close" onclick="closeDetail()">×</span>
+    </div>
 
-<div class="modal-header">
+    <div id="detailInfo"></div>
 
-<h2 id="detailTitle">
-DFM Details
-</h2>
+    <div class="panel" style="margin-top:18px">
+      <h3>Add DFM Activity / Communication</h3>
 
-<button id="closeDetail" class="btn btn-secondary">
-Close
-</button>
+      <div class="form-grid">
 
+        <div>
+          <label>Activity Type *</label>
+          <select id="aType">
+            <option value="MODEL_SENT_TO_NPD">Model Sent to NPD</option>
+            <option value="SENT_TO_SUPPLIER">NPD Sent to Supplier</option>
+            <option value="SUPPLIER_FEEDBACK">Supplier Feedback Received</option>
+            <option value="FEEDBACK_TO_DESIGN">NPD Shared Feedback to Design</option>
+            <option value="DESIGN_RESPONSE">Design Response Completed</option>
+            <option value="SENT_TO_NPD">Revised Model Sent to NPD</option>
+            <option value="SUPPLIER_CONFIRMATION">Supplier Confirmation</option>
+            <option value="DFM_CLOSED">DFM Closed</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Iteration *</label>
+          <input id="aIteration" type="number" min="1" value="1">
+        </div>
+
+        <div>
+          <label>Revision</label>
+          <input id="aRevision">
+        </div>
+
+        <div>
+          <label>Communication Direction</label>
+          <select id="aDirection">
+            <option>Design → NPD</option>
+            <option>NPD → Supplier</option>
+            <option>Supplier → NPD</option>
+            <option>NPD → Design</option>
+            <option>Supplier → NPD → Design</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Sent Date</label>
+          <input id="aSentDate" type="date">
+        </div>
+
+        <div>
+          <label>Received Date</label>
+          <input id="aReceivedDate" type="date">
+        </div>
+
+        <div>
+          <label>Share / Pending With</label>
+          <select id="aShareTo">
+            <option value="">Select</option>
+            <option>NPD</option>
+            <option>Supplier</option>
+            <option>Design</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Person / Contact</label>
+          <select id="aPerson"></select>
+        </div>
+
+        <div class="full">
+          <label>Supplier Feedback</label>
+          <textarea id="aFeedback" placeholder="Enter supplier DFM feedback..."></textarea>
+        </div>
+
+        <div class="full">
+          <label>Design Response / Action</label>
+          <textarea id="aResponse" placeholder="Enter design response / change implemented..."></textarea>
+        </div>
+
+        <div class="full">
+          <label>Remarks</label>
+          <textarea id="aRemarks"></textarea>
+        </div>
+
+      </div>
+
+      <h3 style="margin-top:22px">Document / File Tracking</h3>
+
+      <div class="form-grid">
+
+        <div>
+          <label>Document Name</label>
+          <input id="aDocName" placeholder="Example: Cell_Holder_R01.step">
+        </div>
+
+        <div>
+          <label>Document Type</label>
+          <select id="aDocType">
+            <option value="">Select</option>
+            <option>3D Model</option>
+            <option>2D Drawing</option>
+            <option>DFM PDF</option>
+            <option>Supplier Markup</option>
+            <option>PPT / PPTX</option>
+            <option>Excel</option>
+            <option>Word</option>
+            <option>Image</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <div>
+          <label>Document Revision</label>
+          <input id="aDocRevision">
+        </div>
+
+        <div>
+          <label>File Direction</label>
+          <select id="aDocDirection">
+            <option value="">Select</option>
+            <option>Sent</option>
+            <option>Received</option>
+          </select>
+        </div>
+
+        <div class="full">
+          <label>Google Drive / SharePoint / File Link</label>
+          <input id="aDocUrl" placeholder="Paste document link">
+        </div>
+
+      </div>
+
+      <button class="primary" id="addActivityBtn" style="margin-top:16px">
+        Save Activity
+      </button>
+    </div>
+
+    <h3>Complete DFM History</h3>
+    <div id="timeline" class="timeline"></div>
+
+  </div>
 </div>
-
-<div id="caseInfo" class="section-card"></div>
-
-<br>
-
-<div class="grid">
-
-<div class="section-card">
-
-<h3>Add Activity</h3>
-
-<div class="field">
-
-<label>Activity Type</label>
-
-<select id="activityType">
-
-<option>MODEL_SENT_TO_NPD</option>
-<option>SENT_TO_SUPPLIER</option>
-<option>SUPPLIER_FEEDBACK</option>
-<option>FEEDBACK_TO_DESIGN</option>
-<option>DESIGN_RESPONSE</option>
-<option>SENT_TO_NPD</option>
-<option>SUPPLIER_CONFIRMATION</option>
-<option>DFM_CLOSED</option>
-
-</select>
-
-</div>
-
-
-<div class="field">
-
-<label>Iteration</label>
-
-<input
-id="iteration"
-type="number"
-min="1"
-value="1">
-
-</div>
-
-
-<div class="field">
-
-<label>Revision</label>
-
-<input id="activityRevision">
-
-</div>
-
-
-<div class="field">
-
-<label>Share To</label>
-
-<select id="shareTo">
-
-<option value="">-- Select --</option>
-<option>NPD</option>
-<option>Supplier</option>
-<option>Design</option>
-
-</select>
-
-</div>
-
-
-<div class="field">
-
-<label>Recipient / Person</label>
-
-<input
-id="recipient"
-placeholder="Example: Rahul / Rajesh">
-
-</div>
-
-
-<div class="field">
-
-<label>Supplier Feedback</label>
-
-<textarea
-id="supplierFeedback"
-placeholder="Enter supplier feedback">
-</textarea>
-
-</div>
-
-
-<div class="field">
-
-<label>Design Response / Remarks</label>
-
-<textarea
-id="designResponse"
-placeholder="Enter design response or remarks">
-</textarea>
-
-</div>
-
-
-<button id="saveActivityBtn" class="btn">
-Save Activity
-</button>
-
-<div id="activityMessage" class="message"></div>
-
-</div>
-
-
-<div class="section-card">
-
-<h3>Complete DFM History</h3>
-
-<div id="history" class="history"></div>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
-
 
 <script type="module">
 
-import {
-initializeApp
-}
-from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-
+import { initializeApp } from
+"https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 
 import {
-getAuth,
-createUserWithEmailAndPassword,
-signInWithEmailAndPassword,
-sendPasswordResetEmail,
-onAuthStateChanged,
-signOut,
-updateProfile
-}
-from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
-
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged,
+  sendPasswordResetEmail
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
 import {
-getFirestore,
-doc,
-setDoc,
-addDoc,
-collection,
-query,
-orderBy,
-onSnapshot,
-serverTimestamp,
-updateDoc
-}
-from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+  getFirestore,
+  collection,
+  addDoc,
+  setDoc,
+  getDoc,
+  getDocs,
+  doc,
+  updateDoc,
+  query,
+  orderBy,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
 
-/* FIREBASE CONFIG */
+/* ==========================================================
+   FIREBASE CONFIG
+   ========================================================== */
 
 const firebaseConfig = {
-
-apiKey: "AIzaSyBbVwPxoGl4P6McdDIprSYMCikHOE0fW5A",
-
-authDomain:
-"dfm-tracker.firebaseapp.com",
-
-projectId:
-"dfm-tracker",
-
-storageBucket:
-"dfm-tracker.firebasestorage.app",
-
-messagingSenderId:
-"684913297611",
-
-appId:
-"1:684913297611:web:28d1c61b3aa0f4c233334e"
-
+  apiKey: "AIzaSyBbVwPxoGl4P6McdDIprSYMCikHOE0fW5A",
+  authDomain: "dfm-tracker.firebaseapp.com",
+  projectId: "dfm-tracker",
+  storageBucket: "dfm-tracker.firebasestorage.app",
+  messagingSenderId: "684913297611",
+  appId: "1:684913297611:web:28d1c61b3aa0f4c233334e"
 };
 
-
-const app = initializeApp(firebaseConfig);
-
-const auth = getAuth(app);
-
-const db = getFirestore(app);
+const firebaseApp = initializeApp(firebaseConfig);
+const auth = getAuth(firebaseApp);
+const db = getFirestore(firebaseApp);
 
 
-const $ = id =>
-document.getElementById(id);
+/* ==========================================================
+   GLOBAL STATE
+   ========================================================== */
 
-
+let currentUser = null;
+let currentProfile = null;
 let dfmCases = [];
-
-let activities = [];
-
-let currentCase = null;
-
-let caseListener = null;
-
-let activityListener = null;
+let suppliers = [];
+let contacts = [];
+let currentDfmId = null;
+let currentActivities = [];
 
 
-/* MESSAGE */
+/* ==========================================================
+   HELPERS
+   ========================================================== */
 
-function showMessage(element,text,success=false) {
+const $ = id => document.getElementById(id);
 
-element.innerHTML =
-`<span class="${success ? "success" : "error"}">
-${text}
-</span>`;
+function escapeHtml(v=""){
+  return String(v)
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;");
+}
 
+function fmtDate(v){
+  if(!v) return "-";
+
+  if(v.toDate){
+    return v.toDate().toLocaleDateString("en-GB");
+  }
+
+  const d = new Date(v + (String(v).length===10 ? "T00:00:00" : ""));
+  if(isNaN(d)) return v;
+
+  return d.toLocaleDateString("en-GB");
+}
+
+function today(){
+  return new Date().toISOString().slice(0,10);
+}
+
+function daysBetween(a,b){
+  if(!a || !b) return "-";
+  const d1=new Date(a);
+  const d2=new Date(b);
+  return Math.max(0,Math.round((d2-d1)/86400000));
+}
+
+function ageing(c){
+  if(!c.startDate) return 0;
+
+  const end = c.currentStatus==="Closed" && c.closureDate
+    ? new Date(c.closureDate)
+    : new Date();
+
+  return Math.max(
+    0,
+    Math.floor((end-new Date(c.startDate))/86400000)
+  );
+}
+
+function overdue(c){
+  if(!c.targetClosureDate || c.currentStatus==="Closed") return false;
+  return new Date(c.targetClosureDate) < new Date(today());
+}
+
+function statusBadge(status=""){
+  let cls="b-open";
+
+  if(status.includes("Supplier")) cls="b-supplier";
+  else if(status.includes("NPD")) cls="b-npd";
+  else if(status.includes("Design")) cls="b-design";
+  else if(status==="Closed") cls="b-closed";
+
+  return `<span class="badge ${cls}">${escapeHtml(status)}</span>`;
+}
+
+function activityLabel(type){
+  const map={
+    MODEL_SENT_TO_NPD:"Model Sent to NPD",
+    SENT_TO_SUPPLIER:"NPD Sent to Supplier",
+    SUPPLIER_FEEDBACK:"Supplier Feedback Received",
+    FEEDBACK_TO_DESIGN:"Feedback Shared to Design",
+    DESIGN_RESPONSE:"Design Response Completed",
+    SENT_TO_NPD:"Revised Model Sent to NPD",
+    SUPPLIER_CONFIRMATION:"Supplier Confirmation",
+    DFM_CLOSED:"DFM Closed"
+  };
+  return map[type] || type;
+}
+
+function calculateStatus(type,shareTo,name){
+
+  if(type==="DFM_CLOSED") return "Closed";
+
+  if(type==="SUPPLIER_FEEDBACK" ||
+     type==="FEEDBACK_TO_DESIGN"){
+    return name ? `Design Pending – ${name}` : "Design Pending";
+  }
+
+  if(type==="DESIGN_RESPONSE" ||
+     type==="SENT_TO_NPD" ||
+     type==="MODEL_SENT_TO_NPD"){
+    return name ? `Pending with NPD – ${name}` : "Pending with NPD";
+  }
+
+  if(type==="SENT_TO_SUPPLIER"){
+    return name
+      ? `Pending with Supplier – ${name}`
+      : "Pending with Supplier";
+  }
+
+  if(type==="SUPPLIER_CONFIRMATION"){
+    return "Design Pending";
+  }
+
+  if(shareTo==="NPD")
+    return name ? `Pending with NPD – ${name}` : "Pending with NPD";
+
+  if(shareTo==="Supplier")
+    return name ? `Pending with Supplier – ${name}` : "Pending with Supplier";
+
+  if(shareTo==="Design")
+    return name ? `Design Pending – ${name}` : "Design Pending";
+
+  return "Open";
 }
 
 
-/* ESCAPE HTML */
+/* ==========================================================
+   AUTHENTICATION
+   ========================================================== */
 
-function escapeHTML(value="") {
+$("signupBtn").onclick = async()=>{
 
-return String(value)
-.replaceAll("&","&amp;")
-.replaceAll("<","&lt;")
-.replaceAll(">","&gt;")
-.replaceAll('"',"&quot;")
-.replaceAll("'","&#039;");
+  const name=$("loginName").value.trim();
+  const email=$("loginEmail").value.trim();
+  const password=$("loginPassword").value;
 
-}
+  if(!name){
+    $("loginError").textContent="Enter your name.";
+    return;
+  }
 
+  try{
+    const cred=await createUserWithEmailAndPassword(
+      auth,email,password
+    );
 
-/* LOGIN */
+    await setDoc(doc(db,"users",cred.user.uid),{
+      uid:cred.user.uid,
+      displayName:name,
+      email,
+      role:"Design",
+      createdAt:serverTimestamp(),
+      lastLoginAt:serverTimestamp()
+    });
 
-$("loginBtn").onclick = async () => {
-
-try {
-
-await signInWithEmailAndPassword(
-auth,
-$("email").value.trim(),
-$("password").value
-);
-
-}
-catch(error) {
-
-showMessage(
-$("loginMessage"),
-error.message
-);
-
-}
-
+  }catch(e){
+    $("loginError").textContent=e.message;
+  }
 };
 
 
-/* CREATE ACCOUNT */
+$("loginBtn").onclick = async()=>{
 
-$("signupBtn").onclick = async () => {
-
-try {
-
-const result =
-await createUserWithEmailAndPassword(
-auth,
-$("email").value.trim(),
-$("password").value
-);
-
-
-const displayName =
-$("name").value.trim()
-||
-$("email").value.split("@")[0];
-
-
-await updateProfile(
-result.user,
-{
-displayName
-}
-);
-
-
-await setDoc(
-doc(db,"users",result.user.uid),
-{
-
-uid: result.user.uid,
-
-email: result.user.email,
-
-displayName,
-
-role: "Design Engineer",
-
-createdAt:
-serverTimestamp(),
-
-lastLoginAt:
-serverTimestamp()
-
-},
-{
-merge:true
-}
-);
-
-
-showMessage(
-$("loginMessage"),
-"Account created successfully.",
-true
-);
-
-}
-catch(error) {
-
-showMessage(
-$("loginMessage"),
-error.message
-);
-
-}
-
+  try{
+    await signInWithEmailAndPassword(
+      auth,
+      $("loginEmail").value.trim(),
+      $("loginPassword").value
+    );
+  }catch(e){
+    $("loginError").textContent=e.message;
+  }
 };
 
 
-/* PASSWORD RESET */
+$("forgotBtn").onclick=async()=>{
 
-$("resetBtn").onclick = async () => {
+  const email=$("loginEmail").value.trim();
 
-try {
+  if(!email){
+    $("loginError").textContent="Enter your email first.";
+    return;
+  }
 
-await sendPasswordResetEmail(
-auth,
-$("email").value.trim()
-);
-
-showMessage(
-$("loginMessage"),
-"Password reset email sent.",
-true
-);
-
-}
-catch(error) {
-
-showMessage(
-$("loginMessage"),
-error.message
-);
-
-}
-
+  try{
+    await sendPasswordResetEmail(auth,email);
+    $("loginError").textContent="Password reset email sent.";
+  }catch(e){
+    $("loginError").textContent=e.message;
+  }
 };
 
 
-/* LOGOUT */
-
-$("logoutBtn").onclick =
-() => signOut(auth);
+$("logoutBtn").onclick=()=>signOut(auth);
 
 
-/* AUTH STATE */
+onAuthStateChanged(auth,async user=>{
 
-onAuthStateChanged(
-auth,
-async user => {
+  if(!user){
+    currentUser=null;
+    $("loginPage").classList.remove("hidden");
+    $("app").classList.add("hidden");
+    return;
+  }
 
-if(user) {
+  currentUser=user;
 
-$("loginPage")
-.classList.add("hidden");
+  const snap=await getDoc(doc(db,"users",user.uid));
 
-$("appPage")
-.classList.remove("hidden");
+  currentProfile=snap.exists()
+    ? snap.data()
+    : {
+        displayName:user.email,
+        email:user.email,
+        role:"Design"
+      };
 
+  $("userName").textContent=currentProfile.displayName || user.email;
+  $("userEmail").textContent=user.email;
 
-$("currentUser")
-.textContent =
-`${user.displayName || ""} ${user.email}`;
+  $("loginPage").classList.add("hidden");
+  $("app").classList.remove("hidden");
 
-
-await setDoc(
-doc(db,"users",user.uid),
-{
-
-uid:user.uid,
-
-email:user.email,
-
-displayName:
-user.displayName || "",
-
-lastLoginAt:
-serverTimestamp()
-
-},
-{
-merge:true
-}
-);
-
-
-loadDFMCases();
-
-}
-
-else {
-
-$("appPage")
-.classList.add("hidden");
-
-$("loginPage")
-.classList.remove("hidden");
-
-
-if(caseListener)
-caseListener();
-
-
-if(activityListener)
-activityListener();
-
-}
-
-}
-);
-
-
-/* NAVIGATION */
-
-document
-.querySelectorAll(".nav")
-.forEach(button => {
-
-button.onclick = () => {
-
-document
-.querySelectorAll(".nav")
-.forEach(b =>
-b.classList.remove("active")
-);
-
-
-button
-.classList.add("active");
-
-
-const page =
-button.dataset.page;
-
-
-["dashboard","cases"]
-.forEach(id => {
-
-$(id)
-.classList.toggle(
-"hidden",
-id !== page
-);
-
-});
-
-render();
-
-};
-
+  await loadAllData();
 });
 
 
-/* LOAD DFM */
-
-function loadDFMCases() {
-
-if(caseListener)
-caseListener();
-
-
-caseListener =
-onSnapshot(
-
-query(
-collection(db,"dfmCases"),
-orderBy("createdAt","desc")
-),
-
-snapshot => {
-
-dfmCases =
-snapshot.docs
-.map(d => ({
-docId:d.id,
-...d.data()
-}))
-.filter(d =>
-!d.archived
-);
-
-
-render();
-
-},
-
-error => {
-
-console.error(error);
-
-}
-
-);
-
-}
-
-
-/* RENDER */
-
-function render() {
-
-$("totalDFM")
-.textContent =
-dfmCases.length;
-
-
-$("openDFM")
-.textContent =
-dfmCases
-.filter(d =>
-d.currentStatus !== "Closed"
-)
-.length;
-
-
-$("closedDFM")
-.textContent =
-dfmCases
-.filter(d =>
-d.currentStatus === "Closed"
-)
-.length;
-
-
-$("supplierPending")
-.textContent =
-dfmCases
-.filter(d =>
-(d.currentStatus || "")
-.includes("Supplier")
-)
-.length;
-
-
-$("recentCases")
-.innerHTML =
-createTable(
-dfmCases.slice(0,5)
-);
-
-
-const term =
-$("search")
-.value
-.toLowerCase();
-
-
-const filtered =
-dfmCases.filter(d =>
-
-[
-d.dfmId,
-d.project,
-d.partNumber,
-d.description,
-d.supplier
-]
-
-.join(" ")
-.toLowerCase()
-.includes(term)
-
-);
-
-
-$("dfmTable")
-.innerHTML =
-createTable(filtered);
-
-}
-
-
-/* TABLE */
-
-function createTable(data) {
-
-if(!data.length)
-
-return `
-<p class="small">
-No DFM records available.
-</p>
-`;
-
-
-return `
-
-<table>
-
-<thead>
-
-<tr>
-
-<th>DFM ID</th>
-<th>Project</th>
-<th>Part Number</th>
-<th>Supplier</th>
-<th>Revision</th>
-<th>Status</th>
-
-</tr>
-
-</thead>
-
-<tbody>
-
-${data.map(d => `
-
-<tr>
-
-<td>
-
-<span
-class="click open-dfm"
-data-id="${d.docId}">
-
-${escapeHTML(d.dfmId)}
-
-</span>
-
-</td>
-
-<td>
-${escapeHTML(d.project)}
-</td>
-
-<td>
-${escapeHTML(d.partNumber)}
-</td>
-
-<td>
-${escapeHTML(d.supplier)}
-</td>
-
-<td>
-${escapeHTML(d.currentRevision)}
-</td>
-
-<td>
-
-<span class="status">
-
-${escapeHTML(
-d.currentStatus || "Open"
-)}
-
-</span>
-
-</td>
-
-</tr>
-
-`).join("")}
-
-</tbody>
-
-</table>
-
-`;
-
-}
-
-
-/* SEARCH */
-
-$("search").oninput =
-render;
-
-
-/* OPEN DFM */
-
-document.addEventListener(
-"click",
-event => {
-
-if(
-event.target
-.classList
-.contains("open-dfm")
-) {
-
-openDFM(
-event.target.dataset.id
-);
-
-}
-
-}
-);
-
-
-function openDFM(id) {
-
-currentCase =
-dfmCases
-.find(d =>
-d.docId === id
-);
-
-
-if(!currentCase)
-return;
-
-
-$("detailModal")
-.classList
-.remove("hidden");
-
-
-$("detailTitle")
-.textContent =
-`${currentCase.dfmId} — ${currentCase.partNumber || ""}`;
-
-
-$("activityRevision")
-.value =
-currentCase.currentRevision || "";
-
-
-$("caseInfo")
-.innerHTML = `
-
-<div class="grid">
-
-<div>
-<b>Project:</b>
-${escapeHTML(currentCase.project)}
-</div>
-
-<div>
-<b>Supplier:</b>
-${escapeHTML(currentCase.supplier)}
-</div>
-
-<div>
-<b>Description:</b>
-${escapeHTML(currentCase.description)}
-</div>
-
-<div>
-<b>Status:</b>
-${escapeHTML(currentCase.currentStatus)}
-</div>
-
-<div>
-<b>NPD Owner:</b>
-${escapeHTML(currentCase.npdOwner)}
-</div>
-
-<div>
-<b>Design Owner:</b>
-${escapeHTML(currentCase.designOwner)}
-</div>
-
-</div>
-
-`;
-
-
-loadActivities();
-
-}
-
-
-/* ACTIVITIES */
-
-function loadActivities() {
-
-if(activityListener)
-activityListener();
-
-
-activityListener =
-onSnapshot(
-
-query(
-
-collection(
-db,
-"dfmCases",
-currentCase.docId,
-"activities"
-),
-
-orderBy(
-"createdAt",
-"desc"
-)
-
-),
-
-snapshot => {
-
-activities =
-snapshot.docs
-.map(d => ({
-id:d.id,
-...d.data()
-}));
-
-
-renderHistory();
-
-}
-
-);
-
-}
-
-
-/* HISTORY */
-
-function renderHistory() {
-
-if(!activities.length) {
-
-$("history")
-.innerHTML =
-`
-<p class="small">
-No history recorded yet.
-</p>
-`;
-
-return;
-
-}
-
-
-$("history")
-.innerHTML =
-activities
-.map(a => `
-
-<div class="history-item">
-
-<div class="history-title">
-
-${escapeHTML(a.activityType)}
-
-— Iteration
-
-${escapeHTML(a.iteration)}
-
-</div>
-
-
-<div class="small">
-
-${a.createdAt?.toDate
-?
-a.createdAt
-.toDate()
-.toLocaleString()
-:
-"Saving..."
-}
-
-<br>
-
-Performed by:
-
-${escapeHTML(
-a.createdByName
-||
-a.createdByEmail
-)}
-
-</div>
-
-
-<div>
-
-Revision:
-
-<b>
-${escapeHTML(
-a.revision || "-"
-)}
-</b>
-
-</div>
-
-
-<div>
-
-Share To:
-
-${escapeHTML(
-a.shareTo || "-"
-)}
-
-${escapeHTML(
-a.shareToName || ""
-)}
-
-</div>
-
-
-${a.feedback
-?
-`
-
-<div class="feedback">
-
-<b>
-Supplier Feedback
-</b>
-
-<br>
-
-${escapeHTML(a.feedback)}
-
-</div>
-
-`
-:
-""
-}
-
-
-${a.response
-?
-`
-
-<div class="feedback">
-
-<b>
-Design Response / Remarks
-</b>
-
-<br>
-
-${escapeHTML(a.response)}
-
-</div>
-
-`
-:
-""
-}
-
-</div>
-
-`)
-.join("");
-
-}
-
-
-/* NEW DFM */
-
-$("newDFMBtn").onclick =
-() => {
-
-$("newModal")
-.classList
-.remove("hidden");
-
-
-$("startDate")
-.value =
-new Date()
-.toISOString()
-.slice(0,10);
-
+/* ==========================================================
+   NAVIGATION
+   ========================================================== */
+
+window.showPage=function(page){
+
+  document.querySelectorAll("[id^='page-']").forEach(x=>
+    x.classList.add("hidden")
+  );
+
+  $("page-"+page).classList.remove("hidden");
+
+  document.querySelectorAll(".nav-item").forEach(x=>
+    x.classList.toggle("active",x.dataset.page===page)
+  );
+
+  const names={
+    dashboard:"Dashboard",
+    cases:"DFM Cases",
+    newdfm:"New DFM",
+    partsearch:"Part Search & History",
+    actions:"My Actions",
+    feedback:"Supplier Feedback",
+    contacts:"Contacts & Suppliers",
+    reports:"Reports"
+  };
+
+  $("topTitle").textContent=names[page];
+
+  if(page==="dashboard") renderDashboard();
+  if(page==="cases") renderCases();
+  if(page==="actions") renderMyActions();
+  if(page==="feedback") renderFeedback();
+  if(page==="contacts") renderContacts();
+  if(page==="reports") renderReports();
 };
 
 
-$("closeNew").onclick =
-() =>
-$("newModal")
-.classList
-.add("hidden");
+document.querySelectorAll(".nav-item").forEach(item=>{
+  item.onclick=()=>showPage(item.dataset.page);
+});
 
 
-$("createDFMBtn").onclick =
-async () => {
+/* ==========================================================
+   LOAD DATABASE
+   ========================================================== */
 
-const user =
-auth.currentUser;
+async function loadAllData(){
 
+  await Promise.all([
+    loadCases(),
+    loadSuppliers(),
+    loadContacts()
+  ]);
 
-if(!user)
-return;
-
-
-const id =
-$("dfmId")
-.value
-.trim();
-
-
-if(!id) {
-
-showMessage(
-$("newMessage"),
-"DFM ID is required."
-);
-
-return;
-
+  populateSelectors();
+  renderDashboard();
 }
 
 
-try {
+async function loadCases(){
 
-await addDoc(
-collection(db,"dfmCases"),
-{
+  const snap=await getDocs(collection(db,"dfmCases"));
 
-dfmId:id,
+  dfmCases=snap.docs.map(d=>({
+    firestoreId:d.id,
+    ...d.data()
+  }));
 
-project:
-$("project").value.trim(),
-
-partNumber:
-$("partNumber").value.trim(),
-
-description:
-$("description").value.trim(),
-
-assembly:
-$("assembly").value.trim(),
-
-designOwner:
-user.displayName
-||
-user.email,
-
-designOwnerUid:
-user.uid,
-
-npdOwner:
-$("npdOwner").value.trim(),
-
-supplier:
-$("supplier").value.trim(),
-
-priority:
-$("priority").value,
-
-startDate:
-$("startDate").value,
-
-targetClosureDate:
-$("targetDate").value,
-
-currentRevision:
-$("revision").value.trim(),
-
-currentStatus:
-"Design Pending",
-
-closureDate:"",
-
-createdByUid:
-user.uid,
-
-createdByEmail:
-user.email,
-
-createdByName:
-user.displayName || "",
-
-createdAt:
-serverTimestamp(),
-
-updatedAt:
-serverTimestamp(),
-
-archived:false
-
+  dfmCases.sort((a,b)=>{
+    const aa=a.createdAt?.seconds || 0;
+    const bb=b.createdAt?.seconds || 0;
+    return bb-aa;
+  });
 }
 
-);
 
+async function loadSuppliers(){
 
-$("newModal")
-.classList
-.add("hidden");
+  const snap=await getDocs(collection(db,"suppliers"));
 
-
-showMessage(
-$("newMessage"),
-"DFM created successfully.",
-true
-);
-
+  suppliers=snap.docs.map(d=>({
+    id:d.id,
+    ...d.data()
+  }));
 }
 
-catch(error) {
 
-showMessage(
-$("newMessage"),
-error.message
-);
+async function loadContacts(){
 
+  const snap=await getDocs(collection(db,"contacts"));
+
+  contacts=snap.docs.map(d=>({
+    id:d.id,
+    ...d.data()
+  }));
 }
 
+
+/* ==========================================================
+   SELECTORS
+   ========================================================== */
+
+function populateSelectors(){
+
+  $("nSupplier").innerHTML=
+    `<option value="">Select Supplier</option>`+
+    suppliers.map(s=>
+      `<option value="${s.id}">${escapeHtml(s.name)}</option>`
+    ).join("");
+
+  $("contactSupplier").innerHTML=
+    `<option value="">Not Applicable</option>`+
+    suppliers.map(s=>
+      `<option value="${s.id}">${escapeHtml(s.name)}</option>`
+    ).join("");
+
+  const npd=contacts.filter(c=>c.role==="NPD");
+
+  $("nNpdOwner").innerHTML=
+    `<option value="">Select NPD Owner</option>`+
+    npd.map(c=>
+      `<option value="${c.id}">${escapeHtml(c.name)}</option>`
+    ).join("");
+
+  populateActivityPeople();
+}
+
+
+$("aShareTo").onchange=populateActivityPeople;
+
+function populateActivityPeople(){
+
+  const role=$("aShareTo").value;
+
+  let list=contacts;
+
+  if(role) list=contacts.filter(c=>c.role===role);
+
+  $("aPerson").innerHTML=
+    `<option value="">Select Person</option>`+
+    list.map(c=>
+      `<option value="${c.id}">${escapeHtml(c.name)}</option>`
+    ).join("");
+}
+
+
+/* ==========================================================
+   CREATE DFM
+   ========================================================== */
+
+$("newDfmForm").onsubmit=async e=>{
+
+  e.preventDefault();
+
+  const supplier=suppliers.find(
+    s=>s.id===$("nSupplier").value
+  );
+
+  const npd=contacts.find(
+    c=>c.id===$("nNpdOwner").value
+  );
+
+  const data={
+    dfmId:$("nDfmId").value.trim(),
+    project:$("nProject").value.trim(),
+    partNumber:$("nPart").value.trim(),
+    description:$("nDescription").value.trim(),
+    assembly:$("nAssembly").value.trim(),
+
+    supplierId:supplier?.id || "",
+    supplier:supplier?.name || "",
+
+    npdOwnerId:npd?.id || "",
+    npdOwner:npd?.name || "",
+
+    designOwner:currentProfile.displayName || currentUser.email,
+    designOwnerUid:currentUser.uid,
+
+    priority:$("nPriority").value,
+    startDate:$("nStartDate").value || today(),
+    targetClosureDate:$("nTargetDate").value,
+    currentRevision:$("nRevision").value || "00",
+    currentIteration:1,
+    currentStatus:$("nStatus").value,
+    closureDate:"",
+    remarks:$("nRemarks").value.trim(),
+
+    createdByUid:currentUser.uid,
+    createdByEmail:currentUser.email,
+    createdByName:currentProfile.displayName || currentUser.email,
+    createdAt:serverTimestamp(),
+    updatedAt:serverTimestamp(),
+    archived:false
+  };
+
+  await addDoc(collection(db,"dfmCases"),data);
+
+  e.target.reset();
+  $("nRevision").value="00";
+
+  await loadCases();
+
+  alert("DFM created successfully.");
+
+  showPage("cases");
 };
 
 
-/* STATUS LOGIC */
+/* ==========================================================
+   DASHBOARD
+   ========================================================== */
 
-function determineStatus(
-type,
-shareTo,
-recipient
-) {
+function renderDashboard(){
 
-if(type === "DFM_CLOSED")
-return "Closed";
+  $("kTotal").textContent=dfmCases.length;
 
+  $("kClosed").textContent=
+    dfmCases.filter(c=>c.currentStatus==="Closed").length;
 
-if(type === "SUPPLIER_FEEDBACK")
-return "Design Pending";
+  $("kOpen").textContent=
+    dfmCases.filter(c=>c.currentStatus!=="Closed").length;
 
+  $("kNpd").textContent=
+    dfmCases.filter(c=>
+      (c.currentStatus||"").includes("NPD")
+    ).length;
 
-if(shareTo === "Supplier")
+  $("kSupplier").textContent=
+    dfmCases.filter(c=>
+      (c.currentStatus||"").includes("Supplier")
+    ).length;
 
-return recipient
-?
-`Pending with Supplier – ${recipient}`
-:
-"Supplier Pending";
+  $("kDesign").textContent=
+    dfmCases.filter(c=>
+      (c.currentStatus||"").includes("Design")
+    ).length;
 
+  $("kOverdue").textContent=
+    dfmCases.filter(overdue).length;
 
-if(shareTo === "NPD")
-
-return recipient
-?
-`Pending with NPD – ${recipient}`
-:
-"NPD Pending";
-
-
-if(shareTo === "Design")
-
-return recipient
-?
-`Design Pending – ${recipient}`
-:
-"Design Pending";
-
-
-return "Design Pending";
-
+  $("recentCases").innerHTML=
+    caseTableHtml(dfmCases.slice(0,8));
 }
 
 
-/* SAVE ACTIVITY */
+/* ==========================================================
+   CASE TABLE
+   ========================================================== */
 
-$("saveActivityBtn")
-.onclick =
-async () => {
+function caseTableHtml(list){
 
-const user =
-auth.currentUser;
+  if(!list.length)
+    return `<div class="empty">No DFM cases found.</div>`;
 
-
-if(
-!user
-||
-!currentCase
-)
-return;
-
-
-const type =
-$("activityType").value;
-
-
-const share =
-$("shareTo").value;
-
-
-const recipient =
-$("recipient")
-.value
-.trim();
-
-
-const revision =
-$("activityRevision")
-.value
-.trim();
-
-
-try {
-
-await addDoc(
-
-collection(
-db,
-"dfmCases",
-currentCase.docId,
-"activities"
-),
-
-{
-
-activityType:type,
-
-iteration:
-Number(
-$("iteration").value || 1
-),
-
-revision,
-
-shareTo:share,
-
-shareToName:
-recipient,
-
-feedback:
-$("supplierFeedback")
-.value
-.trim(),
-
-response:
-$("designResponse")
-.value
-.trim(),
-
-createdByUid:
-user.uid,
-
-createdByEmail:
-user.email,
-
-createdByName:
-user.displayName || "",
-
-createdAt:
-serverTimestamp()
-
+  return `
+  <div style="overflow:auto">
+  <table>
+    <thead>
+      <tr>
+        <th>DFM ID</th>
+        <th>Project</th>
+        <th>Part Number</th>
+        <th>Description</th>
+        <th>Supplier</th>
+        <th>Rev</th>
+        <th>Iteration</th>
+        <th>Status</th>
+        <th>Ageing</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      ${list.map(c=>`
+        <tr>
+          <td><b>${escapeHtml(c.dfmId)}</b></td>
+          <td>${escapeHtml(c.project)}</td>
+          <td>${escapeHtml(c.partNumber)}</td>
+          <td>${escapeHtml(c.description)}</td>
+          <td>${escapeHtml(c.supplier||"-")}</td>
+          <td>${escapeHtml(c.currentRevision||"-")}</td>
+          <td>${c.currentIteration||1}</td>
+          <td>
+            ${statusBadge(c.currentStatus||"Open")}
+            ${overdue(c)?'<br><span class="badge b-overdue">OVERDUE</span>':""}
+          </td>
+          <td>${ageing(c)} days</td>
+          <td>
+            <button class="secondary"
+              onclick="openDetail('${c.firestoreId}')">
+              Open
+            </button>
+          </td>
+        </tr>
+      `).join("")}
+    </tbody>
+  </table>
+  </div>`;
 }
 
-);
 
+function renderCases(){
 
-const status =
-determineStatus(
-type,
-share,
-recipient
-);
+  const text=$("caseSearch").value.toLowerCase().trim();
+  const status=$("caseStatus").value;
 
+  let list=dfmCases.filter(c=>{
 
-await updateDoc(
+    const hay=[
+      c.dfmId,
+      c.project,
+      c.partNumber,
+      c.description,
+      c.supplier
+    ].join(" ").toLowerCase();
 
-doc(
-db,
-"dfmCases",
-currentCase.docId
-),
+    const textOk=!text || hay.includes(text);
 
-{
+    const statusOk=
+      !status ||
+      (c.currentStatus||"").includes(status);
 
-currentRevision:
-revision
-||
-currentCase.currentRevision,
+    return textOk && statusOk;
+  });
 
-currentStatus:
-status,
-
-closureDate:
-type === "DFM_CLOSED"
-?
-new Date()
-.toISOString()
-.slice(0,10)
-:
-currentCase.closureDate || "",
-
-updatedAt:
-serverTimestamp()
-
+  $("caseTable").innerHTML=caseTableHtml(list);
 }
 
-);
+$("caseSearch").oninput=renderCases;
+$("caseStatus").onchange=renderCases;
 
 
-$("supplierFeedback").value = "";
+/* ==========================================================
+   DFM DETAIL
+   ========================================================== */
 
-$("designResponse").value = "";
+window.openDetail=async function(id){
 
-$("recipient").value = "";
+  currentDfmId=id;
 
+  const c=dfmCases.find(x=>x.firestoreId===id);
 
-showMessage(
-$("activityMessage"),
-"Activity saved successfully.",
-true
-);
+  if(!c) return;
 
-}
+  $("detailTitle").textContent=c.dfmId;
+  $("detailSubtitle").textContent=
+    `${c.partNumber} • ${c.description}`;
 
-catch(error) {
+  $("aRevision").value=c.currentRevision || "";
+  $("aIteration").value=c.currentIteration || 1;
 
-showMessage(
-$("activityMessage"),
-error.message
-);
+  $("detailInfo").innerHTML=`
+    <div class="two-col">
 
-}
+      <div class="panel">
+        <div class="kv"><b>Project</b><span>${escapeHtml(c.project)}</span></div>
+        <div class="kv"><b>Part Number</b><span>${escapeHtml(c.partNumber)}</span></div>
+        <div class="kv"><b>Description</b><span>${escapeHtml(c.description)}</span></div>
+        <div class="kv"><b>Assembly</b><span>${escapeHtml(c.assembly||"-")}</span></div>
+        <div class="kv"><b>Supplier</b><span>${escapeHtml(c.supplier||"-")}</span></div>
+      </div>
 
+      <div class="panel">
+        <div class="kv"><b>Design Owner</b><span>${escapeHtml(c.designOwner||"-")}</span></div>
+        <div class="kv"><b>NPD Owner</b><span>${escapeHtml(c.npdOwner||"-")}</span></div>
+        <div class="kv"><b>Current Revision</b><span>${escapeHtml(c.currentRevision||"-")}</span></div>
+        <div class="kv"><b>Iteration</b><span>${c.currentIteration||1}</span></div>
+        <div class="kv"><b>Status</b><span>${statusBadge(c.currentStatus||"Open")}</span></div>
+        <div class="kv"><b>Start Date</b><span>${fmtDate(c.startDate)}</span></div>
+        <div class="kv"><b>Target Closure</b><span>${fmtDate(c.targetClosureDate)}</span></div>
+        <div class="kv"><b>Total Ageing</b><span>${ageing(c)} days</span></div>
+      </div>
+
+    </div>
+  `;
+
+  await loadActivities();
+
+  $("detailModal").classList.remove("hidden");
 };
 
 
-/* CLOSE DETAIL */
-
-$("closeDetail")
-.onclick =
-() => {
-
-$("detailModal")
-.classList
-.add("hidden");
-
-
-if(activityListener)
-activityListener();
-
+window.closeDetail=function(){
+  $("detailModal").classList.add("hidden");
 };
+
+
+/* ==========================================================
+   ACTIVITIES
+   ========================================================== */
+
+async function loadActivities(){
+
+  const q=query(
+    collection(db,"dfmCases",currentDfmId,"activities"),
+    orderBy("createdAt","asc")
+  );
+
+  const snap=await getDocs(q);
+
+  currentActivities=snap.docs.map(d=>({
+    id:d.id,
+    ...d.data()
+  }));
+
+  renderTimeline();
+}
+
+
+$("addActivityBtn").onclick=async()=>{
+
+  if(!currentDfmId) return;
+
+  const c=dfmCases.find(
+    x=>x.firestoreId===currentDfmId
+  );
+
+  const person=contacts.find(
+    x=>x.id===$("aPerson").value
+  );
+
+  const type=$("aType").value;
+  const iteration=Number($("aIteration").value)||1;
+  const revision=$("aRevision").value.trim();
+  const shareTo=$("aShareTo").value;
+
+  const documentData={
+    name:$("aDocName").value.trim(),
+    type:$("aDocType").value,
+    revision:$("aDocRevision").value.trim(),
+    direction:$("aDocDirection").value,
+    url:$("aDocUrl").value.trim()
+  };
+
+  const data={
+    activityType:type,
+    iteration,
+    revision,
+
+    direction:$("aDirection").value,
+
+    sentDate:$("aSentDate").value,
+    receivedDate:$("aReceivedDate").value,
+
+    shareTo,
+    shareToPersonId:person?.id || "",
+    shareToName:person?.name || "",
+
+    supplierFeedback:$("aFeedback").value.trim(),
+    designResponse:$("aResponse").value.trim(),
+    remarks:$("aRemarks").value.trim(),
+
+    document:documentData,
+
+    createdByUid:currentUser.uid,
+    createdByEmail:currentUser.email,
+    createdByName:currentProfile.displayName || currentUser.email,
+    createdAt:serverTimestamp()
+  };
+
+  await addDoc(
+    collection(db,"dfmCases",currentDfmId,"activities"),
+    data
+  );
+
+  const newStatus=
+    calculateStatus(type,shareTo,person?.name || "");
+
+  const update={
+    currentStatus:newStatus,
+    currentIteration:iteration,
+    currentRevision:revision || c.currentRevision,
+    updatedAt:serverTimestamp()
+  };
+
+  if(type==="DFM_CLOSED"){
+    update.closureDate=
+      $("aReceivedDate").value ||
+      $("aSentDate").value ||
+      today();
+  }
+
+  await updateDoc(
+    doc(db,"dfmCases",currentDfmId),
+    update
+  );
+
+  clearActivityForm();
+
+  await loadCases();
+  await loadActivities();
+
+  const refreshed=dfmCases.find(
+    x=>x.firestoreId===currentDfmId
+  );
+
+  if(refreshed){
+    $("aRevision").value=refreshed.currentRevision || "";
+    $("aIteration").value=refreshed.currentIteration || 1;
+  }
+
+  alert("Activity saved successfully.");
+};
+
+
+function clearActivityForm(){
+
+  $("aSentDate").value="";
+  $("aReceivedDate").value="";
+  $("aFeedback").value="";
+  $("aResponse").value="";
+  $("aRemarks").value="";
+  $("aDocName").value="";
+  $("aDocType").value="";
+  $("aDocRevision").value="";
+  $("aDocDirection").value="";
+  $("aDocUrl").value="";
+}
+
+
+function renderTimeline(){
+
+  if(!currentActivities.length){
+    $("timeline").innerHTML=
+      `<div class="empty">No activity recorded yet.</div>`;
+    return;
+  }
+
+  $("timeline").innerHTML=currentActivities.map(a=>{
+
+    const tat=
+      a.sentDate && a.receivedDate
+      ? daysBetween(a.sentDate,a.receivedDate)
+      : null;
+
+    const docData=a.document || {};
+
+    return `
+      <div class="event">
+
+        <div class="event-title">
+          Iteration ${a.iteration||1}
+          • Rev ${escapeHtml(a.revision||"-")}
+          • ${escapeHtml(activityLabel(a.activityType))}
+        </div>
+
+        <div class="event-meta">
+          ${escapeHtml(a.direction||"")}
+          &nbsp; | &nbsp;
+          Logged by ${escapeHtml(a.createdByName||a.createdByEmail||"-")}
+          &nbsp; | &nbsp;
+          ${fmtDate(a.createdAt)}
+        </div>
+
+        <div class="event-text">
+
+          ${a.sentDate
+            ? `<b>Sent:</b> ${fmtDate(a.sentDate)}<br>`:""}
+
+          ${a.receivedDate
+            ? `<b>Received:</b> ${fmtDate(a.receivedDate)}<br>`:""}
+
+          ${tat!==null
+            ? `<b>Turnaround:</b> ${tat} day(s)<br>`:""}
+
+          ${a.shareTo
+            ? `<b>Pending / Shared With:</b>
+               ${escapeHtml(a.shareTo)}
+               ${a.shareToName ? " – "+escapeHtml(a.shareToName):""}<br>`:""}
+
+          ${a.supplierFeedback
+            ? `<br><b>Supplier Feedback</b><br>
+               ${escapeHtml(a.supplierFeedback)}<br>`:""}
+
+          ${a.designResponse
+            ? `<br><b>Design Response</b><br>
+               ${escapeHtml(a.designResponse)}<br>`:""}
+
+          ${a.remarks
+            ? `<br><b>Remarks</b><br>
+               ${escapeHtml(a.remarks)}`:""}
+
+          ${docData.name ? `
+            <div class="doc">
+              <b>📎 ${escapeHtml(docData.name)}</b><br>
+              Type: ${escapeHtml(docData.type||"-")}
+              &nbsp; | &nbsp;
+              Rev: ${escapeHtml(docData.revision||"-")}
+              &nbsp; | &nbsp;
+              ${escapeHtml(docData.direction||"")}
+
+              ${docData.url ? `
+                <br><br>
+                <a href="${escapeHtml(docData.url)}"
+                   target="_blank"
+                   rel="noopener noreferrer">
+                   Open File ↗
+                </a>
+              `:""}
+            </div>
+          `:""}
+
+        </div>
+      </div>
+    `;
+  }).join("");
+}
+
+
+/* ==========================================================
+   PART SEARCH
+   ========================================================== */
+
+$("partSearchBtn").onclick=()=>{
+
+  const term=$("partSearchInput").value
+    .trim()
+    .toLowerCase();
+
+  if(!term){
+    $("partSearchResults").innerHTML=
+      `<div class="empty">Enter a Part Number or DFM ID.</div>`;
+    return;
+  }
+
+  const matches=dfmCases.filter(c=>
+    (c.partNumber||"").toLowerCase().includes(term) ||
+    (c.dfmId||"").toLowerCase().includes(term)
+  );
+
+  $("partSearchResults").innerHTML=
+    caseTableHtml(matches);
+};
+
+
+/* ==========================================================
+   MY ACTIONS
+   ========================================================== */
+
+function renderMyActions(){
+
+  const mine=dfmCases.filter(c=>{
+
+    if(c.currentStatus==="Closed") return false;
+
+    const s=(c.currentStatus||"").toLowerCase();
+    const myName=(currentProfile.displayName||"").toLowerCase();
+
+    return (
+      c.designOwnerUid===currentUser.uid ||
+      (myName && s.includes(myName))
+    );
+  });
+
+  $("myActions").innerHTML=caseTableHtml(mine);
+}
+
+
+/* ==========================================================
+   SUPPLIER FEEDBACK
+   ========================================================== */
+
+async function renderFeedback(){
+
+  const rows=[];
+
+  for(const c of dfmCases){
+
+    const snap=await getDocs(
+      collection(db,"dfmCases",c.firestoreId,"activities")
+    );
+
+    snap.docs.forEach(d=>{
+
+      const a=d.data();
+
+      if(a.activityType==="SUPPLIER_FEEDBACK"){
+
+        rows.push({
+          c,
+          a
+        });
+      }
+    });
+  }
+
+  rows.sort((x,y)=>
+    (y.a.createdAt?.seconds||0) -
+    (x.a.createdAt?.seconds||0)
+  );
+
+  if(!rows.length){
+    $("feedbackList").innerHTML=
+      `<div class="empty">No supplier feedback recorded.</div>`;
+    return;
+  }
+
+  $("feedbackList").innerHTML=`
+    <div style="overflow:auto">
+    <table>
+      <thead>
+        <tr>
+          <th>DFM</th>
+          <th>Part Number</th>
+          <th>Supplier</th>
+          <th>Iteration</th>
+          <th>Rev</th>
+          <th>Received Date</th>
+          <th>Feedback</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        ${rows.map(x=>`
+          <tr>
+            <td>${escapeHtml(x.c.dfmId)}</td>
+            <td>${escapeHtml(x.c.partNumber)}</td>
+            <td>${escapeHtml(x.c.supplier||"-")}</td>
+            <td>${x.a.iteration||1}</td>
+            <td>${escapeHtml(x.a.revision||"-")}</td>
+            <td>${fmtDate(x.a.receivedDate)}</td>
+            <td>${escapeHtml(x.a.supplierFeedback||"-")}</td>
+            <td>
+              <button class="secondary"
+                onclick="openDetail('${x.c.firestoreId}')">
+                Open
+              </button>
+            </td>
+          </tr>
+        `).join("")}
+      </tbody>
+    </table>
+    </div>
+  `;
+}
+
+
+/* ==========================================================
+   SUPPLIERS & CONTACTS
+   ========================================================== */
+
+$("addSupplierBtn").onclick=async()=>{
+
+  const name=$("supplierName").value.trim();
+
+  if(!name) return;
+
+  await addDoc(collection(db,"suppliers"),{
+    name,
+    createdByUid:currentUser.uid,
+    createdByEmail:currentUser.email,
+    createdAt:serverTimestamp()
+  });
+
+  $("supplierName").value="";
+
+  await loadSuppliers();
+
+  populateSelectors();
+  renderContacts();
+};
+
+
+$("addContactBtn").onclick=async()=>{
+
+  const name=$("contactName").value.trim();
+
+  if(!name) return;
+
+  const supplier=suppliers.find(
+    s=>s.id===$("contactSupplier").value
+  );
+
+  await addDoc(collection(db,"contacts"),{
+
+    name,
+    email:$("contactEmail").value.trim(),
+    role:$("contactRole").value,
+
+    supplierId:supplier?.id || "",
+    supplierName:supplier?.name || "",
+
+    createdByUid:currentUser.uid,
+    createdByEmail:currentUser.email,
+    createdAt:serverTimestamp()
+  });
+
+  $("contactName").value="";
+  $("contactEmail").value="";
+
+  await loadContacts();
+
+  populateSelectors();
+  renderContacts();
+};
+
+
+function renderContacts(){
+
+  $("supplierList").innerHTML=
+    suppliers.length
+    ? suppliers.map(s=>`
+        <div class="doc">
+          <b>${escapeHtml(s.name)}</b>
+        </div>
+      `).join("")
+    : `<div class="empty">No suppliers added.</div>`;
+
+  $("contactList").innerHTML=
+    contacts.length
+    ? contacts.map(c=>`
+        <div class="doc">
+          <b>${escapeHtml(c.name)}</b><br>
+          ${escapeHtml(c.role||"")}
+          ${c.supplierName
+            ? " • "+escapeHtml(c.supplierName):""}
+          ${c.email
+            ? "<br>"+escapeHtml(c.email):""}
+        </div>
+      `).join("")
+    : `<div class="empty">No contacts added.</div>`;
+}
+
+
+/* ==========================================================
+   REPORTS
+   ========================================================== */
+
+function renderReports(){
+
+  const closed=dfmCases.filter(
+    c=>c.currentStatus==="Closed"
+  );
+
+  const open=dfmCases.filter(
+    c=>c.currentStatus!=="Closed"
+  );
+
+  const avgAge=open.length
+    ? Math.round(
+        open.reduce((s,c)=>s+ageing(c),0)/open.length
+      )
+    : 0;
+
+  const supplierMap={};
+
+  dfmCases.forEach(c=>{
+
+    const name=c.supplier||"Not Assigned";
+
+    if(!supplierMap[name]){
+      supplierMap[name]={
+        total:0,
+        open:0,
+        closed:0
+      };
+    }
+
+    supplierMap[name].total++;
+
+    if(c.currentStatus==="Closed")
+      supplierMap[name].closed++;
+    else
+      supplierMap[name].open++;
+  });
+
+  $("reportContent").innerHTML=`
+
+    <div class="report-grid">
+
+      <div class="card">
+        <div class="number">${dfmCases.length}</div>
+        <div class="label">TOTAL DFM CASES</div>
+      </div>
+
+      <div class="card">
+        <div class="number">${open.length}</div>
+        <div class="label">OPEN CASES</div>
+      </div>
+
+      <div class="card">
+        <div class="number">${closed.length}</div>
+        <div class="label">CLOSED CASES</div>
+      </div>
+
+      <div class="card">
+        <div class="number">${avgAge}</div>
+        <div class="label">AVG OPEN AGEING (DAYS)</div>
+      </div>
+
+      <div class="card">
+        <div class="number">${dfmCases.filter(overdue).length}</div>
+        <div class="label">OVERDUE CASES</div>
+      </div>
+
+    </div>
+
+    <div class="panel" style="margin-top:20px">
+
+      <h3>Supplier Summary</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Supplier</th>
+            <th>Total DFM</th>
+            <th>Open</th>
+            <th>Closed</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          ${Object.entries(supplierMap).map(([name,v])=>`
+            <tr>
+              <td>${escapeHtml(name)}</td>
+              <td>${v.total}</td>
+              <td>${v.open}</td>
+              <td>${v.closed}</td>
+            </tr>
+          `).join("")}
+        </tbody>
+      </table>
+
+    </div>
+
+    <div class="panel">
+
+      <h3>Overdue DFM</h3>
+
+      ${caseTableHtml(
+        dfmCases.filter(overdue)
+      )}
+
+    </div>
+  `;
+}
+
+
+/* ==========================================================
+   DEFAULT DATES
+   ========================================================== */
+
+$("nStartDate").value=today();
 
 </script>
 
