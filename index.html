@@ -1,0 +1,1984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DFM Tracker</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background: #f5f7fb;
+    color: #172033;
+}
+
+.hidden {
+    display: none !important;
+}
+
+button, input, select, textarea {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+/* LOGIN */
+
+.login-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: linear-gradient(135deg,#eef2ff,#f8fafc);
+}
+
+.login-card {
+    width: 420px;
+    max-width: 100%;
+    background: white;
+    padding: 32px;
+    border-radius: 16px;
+    box-shadow: 0 15px 40px rgba(0,0,0,.08);
+}
+
+.login-card h1 {
+    margin: 0 0 5px;
+    color: #2446a8;
+}
+
+.subtitle {
+    color: #667085;
+    margin-bottom: 25px;
+}
+
+label {
+    display: block;
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 6px;
+}
+
+.field {
+    margin-bottom: 15px;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 11px;
+    border: 1px solid #d0d5dd;
+    border-radius: 8px;
+    background: white;
+}
+
+textarea {
+    min-height: 90px;
+    resize: vertical;
+}
+
+.btn {
+    border: none;
+    background: #3157d5;
+    color: white;
+    padding: 11px 16px;
+    border-radius: 8px;
+    font-weight: bold;
+}
+
+.btn-secondary {
+    background: white;
+    color: #344054;
+    border: 1px solid #d0d5dd;
+}
+
+.full {
+    width: 100%;
+}
+
+.auth-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.auth-actions button {
+    flex: 1;
+}
+
+.message {
+    font-size: 13px;
+    margin-top: 12px;
+}
+
+.error {
+    color: #b42318;
+}
+
+.success {
+    color: #067647;
+}
+
+/* APP */
+
+.header {
+    height: 65px;
+    background: white;
+    border-bottom: 1px solid #e4e7ec;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 22px;
+}
+
+.brand {
+    font-size: 20px;
+    font-weight: bold;
+    color: #2446a8;
+}
+
+.user-area {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.user-email {
+    font-size: 13px;
+    color: #667085;
+}
+
+.layout {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    min-height: calc(100vh - 65px);
+}
+
+.sidebar {
+    background: white;
+    border-right: 1px solid #e4e7ec;
+    padding: 18px;
+}
+
+.nav {
+    width: 100%;
+    text-align: left;
+    border: none;
+    background: transparent;
+    padding: 11px;
+    border-radius: 8px;
+    margin-bottom: 5px;
+}
+
+.nav:hover,
+.nav.active {
+    background: #eef2ff;
+    color: #3157d5;
+    font-weight: bold;
+}
+
+main {
+    padding: 24px;
+}
+
+h2 {
+    margin-top: 0;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(4,1fr);
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.card {
+    background: white;
+    border: 1px solid #e4e7ec;
+    border-radius: 12px;
+    padding: 18px;
+}
+
+.card-title {
+    color: #667085;
+    font-size: 13px;
+}
+
+.number {
+    font-size: 30px;
+    font-weight: bold;
+    margin-top: 8px;
+}
+
+.section-card {
+    background: white;
+    border: 1px solid #e4e7ec;
+    border-radius: 12px;
+    padding: 18px;
+}
+
+.top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.search {
+    margin: 15px 0;
+    max-width: 420px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    text-align: left;
+    padding: 11px;
+    border-bottom: 1px solid #eaecf0;
+    font-size: 13px;
+}
+
+th {
+    background: #f9fafb;
+}
+
+.status {
+    background: #eef2ff;
+    color: #3448a5;
+    padding: 5px 9px;
+    border-radius: 20px;
+    display: inline-block;
+    font-size: 12px;
+}
+
+.click {
+    color: #3157d5;
+    text-decoration: underline;
+    cursor: pointer;
+}
+
+/* MODAL */
+
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(16,24,40,.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 20;
+}
+
+.modal-box {
+    background: white;
+    border-radius: 14px;
+    padding: 22px;
+    width: 850px;
+    max-width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.history {
+    border-left: 2px solid #e4e7ec;
+    padding-left: 18px;
+}
+
+.history-item {
+    margin-bottom: 22px;
+}
+
+.history-title {
+    font-weight: bold;
+}
+
+.small {
+    font-size: 12px;
+    color: #667085;
+    margin: 4px 0;
+}
+
+.feedback {
+    margin-top: 7px;
+    padding: 8px;
+    background: #f9fafb;
+    border-radius: 6px;
+}
+
+@media(max-width:850px) {
+
+    .layout {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        display: none;
+    }
+
+    .cards {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+
+<section id="loginPage" class="login-page">
+
+<div class="login-card">
+
+<h1>DFM Tracker</h1>
+
+<div class="subtitle">
+Design • NPD • Supplier Feedback Management
+</div>
+
+<div class="field">
+<label>Name (only required when creating account)</label>
+<input id="name" placeholder="Your name">
+</div>
+
+<div class="field">
+<label>Email</label>
+<input id="email" type="email" placeholder="name@company.com">
+</div>
+
+<div class="field">
+<label>Password</label>
+<input id="password" type="password" placeholder="Minimum 6 characters">
+</div>
+
+<div class="auth-actions">
+
+<button id="loginBtn" class="btn">
+Login
+</button>
+
+<button id="signupBtn" class="btn btn-secondary">
+Create Account
+</button>
+
+</div>
+
+<br>
+
+<button id="resetBtn" class="btn btn-secondary full">
+Forgot Password
+</button>
+
+<div id="loginMessage" class="message"></div>
+
+</div>
+
+</section>
+
+
+<!-- APPLICATION -->
+
+<section id="appPage" class="hidden">
+
+<header class="header">
+
+<div class="brand">
+DFM Tracker
+</div>
+
+<div class="user-area">
+
+<span id="currentUser" class="user-email"></span>
+
+<button id="logoutBtn" class="btn btn-secondary">
+Logout
+</button>
+
+</div>
+
+</header>
+
+
+<div class="layout">
+
+<aside class="sidebar">
+
+<button class="nav active" data-page="dashboard">
+Dashboard
+</button>
+
+<button class="nav" data-page="cases">
+DFM Cases
+</button>
+
+</aside>
+
+
+<main>
+
+<!-- DASHBOARD -->
+
+<section id="dashboard">
+
+<h2>Dashboard</h2>
+
+<div class="cards">
+
+<div class="card">
+<div class="card-title">Total DFM</div>
+<div id="totalDFM" class="number">0</div>
+</div>
+
+<div class="card">
+<div class="card-title">Open</div>
+<div id="openDFM" class="number">0</div>
+</div>
+
+<div class="card">
+<div class="card-title">Supplier Pending</div>
+<div id="supplierPending" class="number">0</div>
+</div>
+
+<div class="card">
+<div class="card-title">Closed</div>
+<div id="closedDFM" class="number">0</div>
+</div>
+
+</div>
+
+
+<div class="section-card">
+
+<h3>Recent DFM Cases</h3>
+
+<div id="recentCases"></div>
+
+</div>
+
+</section>
+
+
+<!-- CASES -->
+
+<section id="cases" class="hidden">
+
+<div class="top-row">
+
+<h2>DFM Cases</h2>
+
+<button id="newDFMBtn" class="btn">
++ New DFM
+</button>
+
+</div>
+
+<input
+id="search"
+class="search"
+placeholder="Search DFM ID, project, part number or supplier">
+
+<div id="dfmTable"></div>
+
+</section>
+
+</main>
+
+</div>
+
+</section>
+
+
+<!-- NEW DFM MODAL -->
+
+<div id="newModal" class="modal hidden">
+
+<div class="modal-box">
+
+<div class="modal-header">
+
+<h2>New DFM Case</h2>
+
+<button id="closeNew" class="btn btn-secondary">
+Close
+</button>
+
+</div>
+
+<div class="grid">
+
+<div class="field">
+<label>DFM ID</label>
+<input id="dfmId" placeholder="DFM-0001">
+</div>
+
+<div class="field">
+<label>Project</label>
+<input id="project" placeholder="EVEREST 1.0">
+</div>
+
+<div class="field">
+<label>Part Number</label>
+<input id="partNumber">
+</div>
+
+<div class="field">
+<label>Part Description</label>
+<input id="description">
+</div>
+
+<div class="field">
+<label>Assembly</label>
+<input id="assembly">
+</div>
+
+<div class="field">
+<label>NPD Owner</label>
+<input id="npdOwner">
+</div>
+
+<div class="field">
+<label>Supplier</label>
+<input id="supplier">
+</div>
+
+<div class="field">
+
+<label>Priority</label>
+
+<select id="priority">
+
+<option>Medium</option>
+<option>High</option>
+<option>Low</option>
+
+</select>
+
+</div>
+
+<div class="field">
+<label>Start Date</label>
+<input id="startDate" type="date">
+</div>
+
+<div class="field">
+<label>Target Closure Date</label>
+<input id="targetDate" type="date">
+</div>
+
+<div class="field">
+<label>Revision</label>
+<input id="revision" value="00">
+</div>
+
+</div>
+
+<button id="createDFMBtn" class="btn">
+Create DFM
+</button>
+
+<div id="newMessage" class="message"></div>
+
+</div>
+
+</div>
+
+
+<!-- DETAIL MODAL -->
+
+<div id="detailModal" class="modal hidden">
+
+<div class="modal-box">
+
+<div class="modal-header">
+
+<h2 id="detailTitle">
+DFM Details
+</h2>
+
+<button id="closeDetail" class="btn btn-secondary">
+Close
+</button>
+
+</div>
+
+<div id="caseInfo" class="section-card"></div>
+
+<br>
+
+<div class="grid">
+
+<div class="section-card">
+
+<h3>Add Activity</h3>
+
+<div class="field">
+
+<label>Activity Type</label>
+
+<select id="activityType">
+
+<option>MODEL_SENT_TO_NPD</option>
+<option>SENT_TO_SUPPLIER</option>
+<option>SUPPLIER_FEEDBACK</option>
+<option>FEEDBACK_TO_DESIGN</option>
+<option>DESIGN_RESPONSE</option>
+<option>SENT_TO_NPD</option>
+<option>SUPPLIER_CONFIRMATION</option>
+<option>DFM_CLOSED</option>
+
+</select>
+
+</div>
+
+
+<div class="field">
+
+<label>Iteration</label>
+
+<input
+id="iteration"
+type="number"
+min="1"
+value="1">
+
+</div>
+
+
+<div class="field">
+
+<label>Revision</label>
+
+<input id="activityRevision">
+
+</div>
+
+
+<div class="field">
+
+<label>Share To</label>
+
+<select id="shareTo">
+
+<option value="">-- Select --</option>
+<option>NPD</option>
+<option>Supplier</option>
+<option>Design</option>
+
+</select>
+
+</div>
+
+
+<div class="field">
+
+<label>Recipient / Person</label>
+
+<input
+id="recipient"
+placeholder="Example: Rahul / Rajesh">
+
+</div>
+
+
+<div class="field">
+
+<label>Supplier Feedback</label>
+
+<textarea
+id="supplierFeedback"
+placeholder="Enter supplier feedback">
+</textarea>
+
+</div>
+
+
+<div class="field">
+
+<label>Design Response / Remarks</label>
+
+<textarea
+id="designResponse"
+placeholder="Enter design response or remarks">
+</textarea>
+
+</div>
+
+
+<button id="saveActivityBtn" class="btn">
+Save Activity
+</button>
+
+<div id="activityMessage" class="message"></div>
+
+</div>
+
+
+<div class="section-card">
+
+<h3>Complete DFM History</h3>
+
+<div id="history" class="history"></div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+
+<script type="module">
+
+import {
+initializeApp
+}
+from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+
+
+import {
+getAuth,
+createUserWithEmailAndPassword,
+signInWithEmailAndPassword,
+sendPasswordResetEmail,
+onAuthStateChanged,
+signOut,
+updateProfile
+}
+from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+
+
+import {
+getFirestore,
+doc,
+setDoc,
+addDoc,
+collection,
+query,
+orderBy,
+onSnapshot,
+serverTimestamp,
+updateDoc
+}
+from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+
+/* FIREBASE CONFIG */
+
+const firebaseConfig = {
+
+apiKey:
+"AIzaSyBbVwPxOgGL4P6McdDIprSYMCikH0E0fW5A",
+
+authDomain:
+"dfm-tracker.firebaseapp.com",
+
+projectId:
+"dfm-tracker",
+
+storageBucket:
+"dfm-tracker.firebasestorage.app",
+
+messagingSenderId:
+"684913297611",
+
+appId:
+"1:684913297611:web:28d1c61b3aa0f4c233334e"
+
+};
+
+
+const app = initializeApp(firebaseConfig);
+
+const auth = getAuth(app);
+
+const db = getFirestore(app);
+
+
+const $ = id =>
+document.getElementById(id);
+
+
+let dfmCases = [];
+
+let activities = [];
+
+let currentCase = null;
+
+let caseListener = null;
+
+let activityListener = null;
+
+
+/* MESSAGE */
+
+function showMessage(element,text,success=false) {
+
+element.innerHTML =
+`<span class="${success ? "success" : "error"}">
+${text}
+</span>`;
+
+}
+
+
+/* ESCAPE HTML */
+
+function escapeHTML(value="") {
+
+return String(value)
+.replaceAll("&","&amp;")
+.replaceAll("<","&lt;")
+.replaceAll(">","&gt;")
+.replaceAll('"',"&quot;")
+.replaceAll("'","&#039;");
+
+}
+
+
+/* LOGIN */
+
+$("loginBtn").onclick = async () => {
+
+try {
+
+await signInWithEmailAndPassword(
+auth,
+$("email").value.trim(),
+$("password").value
+);
+
+}
+catch(error) {
+
+showMessage(
+$("loginMessage"),
+error.message
+);
+
+}
+
+};
+
+
+/* CREATE ACCOUNT */
+
+$("signupBtn").onclick = async () => {
+
+try {
+
+const result =
+await createUserWithEmailAndPassword(
+auth,
+$("email").value.trim(),
+$("password").value
+);
+
+
+const displayName =
+$("name").value.trim()
+||
+$("email").value.split("@")[0];
+
+
+await updateProfile(
+result.user,
+{
+displayName
+}
+);
+
+
+await setDoc(
+doc(db,"users",result.user.uid),
+{
+
+uid: result.user.uid,
+
+email: result.user.email,
+
+displayName,
+
+role: "Design Engineer",
+
+createdAt:
+serverTimestamp(),
+
+lastLoginAt:
+serverTimestamp()
+
+},
+{
+merge:true
+}
+);
+
+
+showMessage(
+$("loginMessage"),
+"Account created successfully.",
+true
+);
+
+}
+catch(error) {
+
+showMessage(
+$("loginMessage"),
+error.message
+);
+
+}
+
+};
+
+
+/* PASSWORD RESET */
+
+$("resetBtn").onclick = async () => {
+
+try {
+
+await sendPasswordResetEmail(
+auth,
+$("email").value.trim()
+);
+
+showMessage(
+$("loginMessage"),
+"Password reset email sent.",
+true
+);
+
+}
+catch(error) {
+
+showMessage(
+$("loginMessage"),
+error.message
+);
+
+}
+
+};
+
+
+/* LOGOUT */
+
+$("logoutBtn").onclick =
+() => signOut(auth);
+
+
+/* AUTH STATE */
+
+onAuthStateChanged(
+auth,
+async user => {
+
+if(user) {
+
+$("loginPage")
+.classList.add("hidden");
+
+$("appPage")
+.classList.remove("hidden");
+
+
+$("currentUser")
+.textContent =
+`${user.displayName || ""} ${user.email}`;
+
+
+await setDoc(
+doc(db,"users",user.uid),
+{
+
+uid:user.uid,
+
+email:user.email,
+
+displayName:
+user.displayName || "",
+
+lastLoginAt:
+serverTimestamp()
+
+},
+{
+merge:true
+}
+);
+
+
+loadDFMCases();
+
+}
+
+else {
+
+$("appPage")
+.classList.add("hidden");
+
+$("loginPage")
+.classList.remove("hidden");
+
+
+if(caseListener)
+caseListener();
+
+
+if(activityListener)
+activityListener();
+
+}
+
+}
+);
+
+
+/* NAVIGATION */
+
+document
+.querySelectorAll(".nav")
+.forEach(button => {
+
+button.onclick = () => {
+
+document
+.querySelectorAll(".nav")
+.forEach(b =>
+b.classList.remove("active")
+);
+
+
+button
+.classList.add("active");
+
+
+const page =
+button.dataset.page;
+
+
+["dashboard","cases"]
+.forEach(id => {
+
+$(id)
+.classList.toggle(
+"hidden",
+id !== page
+);
+
+});
+
+render();
+
+};
+
+});
+
+
+/* LOAD DFM */
+
+function loadDFMCases() {
+
+if(caseListener)
+caseListener();
+
+
+caseListener =
+onSnapshot(
+
+query(
+collection(db,"dfmCases"),
+orderBy("createdAt","desc")
+),
+
+snapshot => {
+
+dfmCases =
+snapshot.docs
+.map(d => ({
+docId:d.id,
+...d.data()
+}))
+.filter(d =>
+!d.archived
+);
+
+
+render();
+
+},
+
+error => {
+
+console.error(error);
+
+}
+
+);
+
+}
+
+
+/* RENDER */
+
+function render() {
+
+$("totalDFM")
+.textContent =
+dfmCases.length;
+
+
+$("openDFM")
+.textContent =
+dfmCases
+.filter(d =>
+d.currentStatus !== "Closed"
+)
+.length;
+
+
+$("closedDFM")
+.textContent =
+dfmCases
+.filter(d =>
+d.currentStatus === "Closed"
+)
+.length;
+
+
+$("supplierPending")
+.textContent =
+dfmCases
+.filter(d =>
+(d.currentStatus || "")
+.includes("Supplier")
+)
+.length;
+
+
+$("recentCases")
+.innerHTML =
+createTable(
+dfmCases.slice(0,5)
+);
+
+
+const term =
+$("search")
+.value
+.toLowerCase();
+
+
+const filtered =
+dfmCases.filter(d =>
+
+[
+d.dfmId,
+d.project,
+d.partNumber,
+d.description,
+d.supplier
+]
+
+.join(" ")
+.toLowerCase()
+.includes(term)
+
+);
+
+
+$("dfmTable")
+.innerHTML =
+createTable(filtered);
+
+}
+
+
+/* TABLE */
+
+function createTable(data) {
+
+if(!data.length)
+
+return `
+<p class="small">
+No DFM records available.
+</p>
+`;
+
+
+return `
+
+<table>
+
+<thead>
+
+<tr>
+
+<th>DFM ID</th>
+<th>Project</th>
+<th>Part Number</th>
+<th>Supplier</th>
+<th>Revision</th>
+<th>Status</th>
+
+</tr>
+
+</thead>
+
+<tbody>
+
+${data.map(d => `
+
+<tr>
+
+<td>
+
+<span
+class="click open-dfm"
+data-id="${d.docId}">
+
+${escapeHTML(d.dfmId)}
+
+</span>
+
+</td>
+
+<td>
+${escapeHTML(d.project)}
+</td>
+
+<td>
+${escapeHTML(d.partNumber)}
+</td>
+
+<td>
+${escapeHTML(d.supplier)}
+</td>
+
+<td>
+${escapeHTML(d.currentRevision)}
+</td>
+
+<td>
+
+<span class="status">
+
+${escapeHTML(
+d.currentStatus || "Open"
+)}
+
+</span>
+
+</td>
+
+</tr>
+
+`).join("")}
+
+</tbody>
+
+</table>
+
+`;
+
+}
+
+
+/* SEARCH */
+
+$("search").oninput =
+render;
+
+
+/* OPEN DFM */
+
+document.addEventListener(
+"click",
+event => {
+
+if(
+event.target
+.classList
+.contains("open-dfm")
+) {
+
+openDFM(
+event.target.dataset.id
+);
+
+}
+
+}
+);
+
+
+function openDFM(id) {
+
+currentCase =
+dfmCases
+.find(d =>
+d.docId === id
+);
+
+
+if(!currentCase)
+return;
+
+
+$("detailModal")
+.classList
+.remove("hidden");
+
+
+$("detailTitle")
+.textContent =
+`${currentCase.dfmId} — ${currentCase.partNumber || ""}`;
+
+
+$("activityRevision")
+.value =
+currentCase.currentRevision || "";
+
+
+$("caseInfo")
+.innerHTML = `
+
+<div class="grid">
+
+<div>
+<b>Project:</b>
+${escapeHTML(currentCase.project)}
+</div>
+
+<div>
+<b>Supplier:</b>
+${escapeHTML(currentCase.supplier)}
+</div>
+
+<div>
+<b>Description:</b>
+${escapeHTML(currentCase.description)}
+</div>
+
+<div>
+<b>Status:</b>
+${escapeHTML(currentCase.currentStatus)}
+</div>
+
+<div>
+<b>NPD Owner:</b>
+${escapeHTML(currentCase.npdOwner)}
+</div>
+
+<div>
+<b>Design Owner:</b>
+${escapeHTML(currentCase.designOwner)}
+</div>
+
+</div>
+
+`;
+
+
+loadActivities();
+
+}
+
+
+/* ACTIVITIES */
+
+function loadActivities() {
+
+if(activityListener)
+activityListener();
+
+
+activityListener =
+onSnapshot(
+
+query(
+
+collection(
+db,
+"dfmCases",
+currentCase.docId,
+"activities"
+),
+
+orderBy(
+"createdAt",
+"desc"
+)
+
+),
+
+snapshot => {
+
+activities =
+snapshot.docs
+.map(d => ({
+id:d.id,
+...d.data()
+}));
+
+
+renderHistory();
+
+}
+
+);
+
+}
+
+
+/* HISTORY */
+
+function renderHistory() {
+
+if(!activities.length) {
+
+$("history")
+.innerHTML =
+`
+<p class="small">
+No history recorded yet.
+</p>
+`;
+
+return;
+
+}
+
+
+$("history")
+.innerHTML =
+activities
+.map(a => `
+
+<div class="history-item">
+
+<div class="history-title">
+
+${escapeHTML(a.activityType)}
+
+— Iteration
+
+${escapeHTML(a.iteration)}
+
+</div>
+
+
+<div class="small">
+
+${a.createdAt?.toDate
+?
+a.createdAt
+.toDate()
+.toLocaleString()
+:
+"Saving..."
+}
+
+<br>
+
+Performed by:
+
+${escapeHTML(
+a.createdByName
+||
+a.createdByEmail
+)}
+
+</div>
+
+
+<div>
+
+Revision:
+
+<b>
+${escapeHTML(
+a.revision || "-"
+)}
+</b>
+
+</div>
+
+
+<div>
+
+Share To:
+
+${escapeHTML(
+a.shareTo || "-"
+)}
+
+${escapeHTML(
+a.shareToName || ""
+)}
+
+</div>
+
+
+${a.feedback
+?
+`
+
+<div class="feedback">
+
+<b>
+Supplier Feedback
+</b>
+
+<br>
+
+${escapeHTML(a.feedback)}
+
+</div>
+
+`
+:
+""
+}
+
+
+${a.response
+?
+`
+
+<div class="feedback">
+
+<b>
+Design Response / Remarks
+</b>
+
+<br>
+
+${escapeHTML(a.response)}
+
+</div>
+
+`
+:
+""
+}
+
+</div>
+
+`)
+.join("");
+
+}
+
+
+/* NEW DFM */
+
+$("newDFMBtn").onclick =
+() => {
+
+$("newModal")
+.classList
+.remove("hidden");
+
+
+$("startDate")
+.value =
+new Date()
+.toISOString()
+.slice(0,10);
+
+};
+
+
+$("closeNew").onclick =
+() =>
+$("newModal")
+.classList
+.add("hidden");
+
+
+$("createDFMBtn").onclick =
+async () => {
+
+const user =
+auth.currentUser;
+
+
+if(!user)
+return;
+
+
+const id =
+$("dfmId")
+.value
+.trim();
+
+
+if(!id) {
+
+showMessage(
+$("newMessage"),
+"DFM ID is required."
+);
+
+return;
+
+}
+
+
+try {
+
+await addDoc(
+collection(db,"dfmCases"),
+{
+
+dfmId:id,
+
+project:
+$("project").value.trim(),
+
+partNumber:
+$("partNumber").value.trim(),
+
+description:
+$("description").value.trim(),
+
+assembly:
+$("assembly").value.trim(),
+
+designOwner:
+user.displayName
+||
+user.email,
+
+designOwnerUid:
+user.uid,
+
+npdOwner:
+$("npdOwner").value.trim(),
+
+supplier:
+$("supplier").value.trim(),
+
+priority:
+$("priority").value,
+
+startDate:
+$("startDate").value,
+
+targetClosureDate:
+$("targetDate").value,
+
+currentRevision:
+$("revision").value.trim(),
+
+currentStatus:
+"Design Pending",
+
+closureDate:"",
+
+createdByUid:
+user.uid,
+
+createdByEmail:
+user.email,
+
+createdByName:
+user.displayName || "",
+
+createdAt:
+serverTimestamp(),
+
+updatedAt:
+serverTimestamp(),
+
+archived:false
+
+}
+
+);
+
+
+$("newModal")
+.classList
+.add("hidden");
+
+
+showMessage(
+$("newMessage"),
+"DFM created successfully.",
+true
+);
+
+}
+
+catch(error) {
+
+showMessage(
+$("newMessage"),
+error.message
+);
+
+}
+
+};
+
+
+/* STATUS LOGIC */
+
+function determineStatus(
+type,
+shareTo,
+recipient
+) {
+
+if(type === "DFM_CLOSED")
+return "Closed";
+
+
+if(type === "SUPPLIER_FEEDBACK")
+return "Design Pending";
+
+
+if(shareTo === "Supplier")
+
+return recipient
+?
+`Pending with Supplier – ${recipient}`
+:
+"Supplier Pending";
+
+
+if(shareTo === "NPD")
+
+return recipient
+?
+`Pending with NPD – ${recipient}`
+:
+"NPD Pending";
+
+
+if(shareTo === "Design")
+
+return recipient
+?
+`Design Pending – ${recipient}`
+:
+"Design Pending";
+
+
+return "Design Pending";
+
+}
+
+
+/* SAVE ACTIVITY */
+
+$("saveActivityBtn")
+.onclick =
+async () => {
+
+const user =
+auth.currentUser;
+
+
+if(
+!user
+||
+!currentCase
+)
+return;
+
+
+const type =
+$("activityType").value;
+
+
+const share =
+$("shareTo").value;
+
+
+const recipient =
+$("recipient")
+.value
+.trim();
+
+
+const revision =
+$("activityRevision")
+.value
+.trim();
+
+
+try {
+
+await addDoc(
+
+collection(
+db,
+"dfmCases",
+currentCase.docId,
+"activities"
+),
+
+{
+
+activityType:type,
+
+iteration:
+Number(
+$("iteration").value || 1
+),
+
+revision,
+
+shareTo:share,
+
+shareToName:
+recipient,
+
+feedback:
+$("supplierFeedback")
+.value
+.trim(),
+
+response:
+$("designResponse")
+.value
+.trim(),
+
+createdByUid:
+user.uid,
+
+createdByEmail:
+user.email,
+
+createdByName:
+user.displayName || "",
+
+createdAt:
+serverTimestamp()
+
+}
+
+);
+
+
+const status =
+determineStatus(
+type,
+share,
+recipient
+);
+
+
+await updateDoc(
+
+doc(
+db,
+"dfmCases",
+currentCase.docId
+),
+
+{
+
+currentRevision:
+revision
+||
+currentCase.currentRevision,
+
+currentStatus:
+status,
+
+closureDate:
+type === "DFM_CLOSED"
+?
+new Date()
+.toISOString()
+.slice(0,10)
+:
+currentCase.closureDate || "",
+
+updatedAt:
+serverTimestamp()
+
+}
+
+);
+
+
+$("supplierFeedback").value = "";
+
+$("designResponse").value = "";
+
+$("recipient").value = "";
+
+
+showMessage(
+$("activityMessage"),
+"Activity saved successfully.",
+true
+);
+
+}
+
+catch(error) {
+
+showMessage(
+$("activityMessage"),
+error.message
+);
+
+}
+
+};
+
+
+/* CLOSE DETAIL */
+
+$("closeDetail")
+.onclick =
+() => {
+
+$("detailModal")
+.classList
+.add("hidden");
+
+
+if(activityListener)
+activityListener();
+
+};
+
+</script>
+
+</body>
+</html>
